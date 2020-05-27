@@ -11,7 +11,7 @@ echo "Found branch $BRANCH_NAME"
 GIT_HASH=`git rev-parse`
 HEAD_HASH=`git rev-parse HEAD`
 echo "Hash: $GIT_HASH  -  $HEAD_HASH"
-cd common/api/CAN
+cd Libraries
 GIT_HASH=`git rev-parse`
 HEAD_HASH=`git rev-parse HEAD`
 echo "CAN Hash: $GIT_HASH  -  $HEAD_HASH"
