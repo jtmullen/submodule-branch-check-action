@@ -1,0 +1,19 @@
+name: 'Submodule Branch Check'
+author: 'jtmullen'
+description: 'Check the branch and commit of a submodule'
+branding:
+  icon: 'hash'
+  color: 'orange'
+inputs:
+  branch:
+    description: "Which branch the submodule must be on"
+    required: false
+    default: ''
+outputs:
+  fails:
+    description: "If it fails"
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path }}
