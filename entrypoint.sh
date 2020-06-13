@@ -6,7 +6,7 @@ REPO=$(jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}")
 
 cd "${GITHUB_WORKSPACE}"
 
-PR=$(jq -r ".issue.number" "${GITHUB_EVENT_PATH}")
+PR=$(jq -r ".number" "${GITHUB_EVENT_PATH}")
 echo "PR: ${PR}"
 
 BASE_URI="https://api.github.com"
