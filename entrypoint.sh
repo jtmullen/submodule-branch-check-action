@@ -13,13 +13,6 @@ BASE_URI="https://api.github.com"
 API_HEADER="Accept: application/vnd.github.v3+json"
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 
-PR_INFO=`curl -X GET -s -H "${AUTH_HEADER}" -H "${API_HEADER}" \
-  "${BASE_URI}/repos/${REPO}/pulls/${PR}"`
-
-echo "${PR_INFO}"
-
-REF=`echo "${PR_INFO}" | jq -r .head.ref`
-
 
 git config --global user.email "submodule@github.com"
 git config --global user.name "GitHub Submodules Action"
@@ -36,7 +29,7 @@ cd Libraries
 lib_hash=`git rev-parse HEAD`
 
 cd ..
-git checkout "${REF}"
+git checkout "${GITHUB_REF}"
 git submodule update
 
 cd Libraries
