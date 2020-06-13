@@ -12,6 +12,7 @@ REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 cd "${GITHUB_WORKSPACE}"
 
 PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
+BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 echo "PR: ${PR}"
 
 git config --global user.email "submodule@github.com"
@@ -29,7 +30,7 @@ cd Libraries
 lib_hash=`git rev-parse HEAD`
 
 cd ..
-git checkout "${GITHUB_SHA}"
+git checkout "${BRANCH}"
 git submodule update
 
 cd Libraries
