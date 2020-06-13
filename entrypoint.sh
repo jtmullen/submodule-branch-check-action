@@ -1,28 +1,20 @@
 #!/bin/sh -l
 
-echo "I am here"
-echo "Print Refs"
-echo "Grep"
-
-echo "${GITHUB_REF}"
-
-echo "${GITHUB_SHA}"
-
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
-
-cd "${GITHUB_WORKSPACE}"
-
 PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
 BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
-echo "PR: ${PR}"
+BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
+echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
+
+cd "${GITHUB_WORKSPACE}"
 
 git config --global user.email "submodule@github.com"
 git config --global user.name "GitHub Submodules Action"
 
-git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
+REMOTES=`git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"`
 git fetch --all -p
 
-git checkout master
+git checkout "${BASE_BRANCH}"
 
 git submodule init
 git submodule update
@@ -37,7 +29,12 @@ git submodule update
 cd Libraries
 master_lib_hash=`git rev-parse HEAD`
 
-echo "Hash: ${master_lib_hash} -> ${lib_hash}"
+echo "Submodule Hash: ${master_lib_hash} -> ${lib_hash}"
+
+## If they are the same its all good
+if [ "${master_lib_hash}" == "${lib_hash}" ]; then
+    echo "PASS"
+fi
 
 if (git branch --contains "${lib_hash}" | grep master); then
     echo "Yes"
