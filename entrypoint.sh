@@ -1,6 +1,7 @@
 #!/bin/sh -l
 
 echo "I am here"
+echo "Print Refs"
 
 echo "${GITHUB_REF}"
 
