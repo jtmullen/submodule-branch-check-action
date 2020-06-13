@@ -1,4 +1,4 @@
-#!/bin/sh -l
+#!/bin/sh -eux
 
 echo "I am here"
 
