@@ -2,6 +2,10 @@
 
 echo "I am here"
 
+echo "${GITHUB_REF}"
+
+echo "${GITHUB_SHA}"
+
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
 cd "${GITHUB_WORKSPACE}"
