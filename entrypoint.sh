@@ -14,15 +14,10 @@ cd "${GITHUB_WORKSPACE}"
 PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
 echo "PR: ${PR}"
 
-BASE_URI="https://api.github.com"
-API_HEADER="Accept: application/vnd.github.v3+json"
-AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
-
-
 git config --global user.email "submodule@github.com"
 git config --global user.name "GitHub Submodules Action"
 
-git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git
+git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
 git fetch --all -p
 
 git checkout master
@@ -34,13 +29,16 @@ cd Libraries
 lib_hash=`git rev-parse HEAD`
 
 cd ..
-git checkout "${GITHUB_REF}"
+git checkout "${GITHUB_SHA}"
 git submodule update
 
 cd Libraries
 master_lib_hash=`git rev-parse HEAD`
 
 echo "Hash: ${master_lib_hash} -> ${lib_hash}"
+
+git branch --contains "${lib_hash}"
+
 
 echo "::set-output name=fails::0"
 
