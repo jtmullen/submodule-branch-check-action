@@ -11,8 +11,8 @@ cd "${GITHUB_WORKSPACE}"
 git config --global user.email "submodule@github.com"
 git config --global user.name "GitHub Submodules Action"
 
-REMOTES=`git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"`
-git fetch --all -p
+git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/
+REMOTES=`git fetch --all -p`
 
 git checkout "${BASE_BRANCH}"
 
