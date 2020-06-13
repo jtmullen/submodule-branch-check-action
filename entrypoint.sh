@@ -16,6 +16,8 @@ AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 PR_INFO=`curl -X GET -s -H "${AUTH_HEADER}" -H "${API_HEADER}" \
   "${BASE_URI}/repos/${REPO}/pulls/${PR}"`
 
+echo "${PR_INFO}"
+
 REF=`echo "${PR_INFO}" | jq -r .head.ref`
 
 
