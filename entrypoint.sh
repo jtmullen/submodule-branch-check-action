@@ -2,7 +2,7 @@
 
 echo "I am here"
 
-REPO=$(jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}")
+REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
 cd "${GITHUB_WORKSPACE}"
 
