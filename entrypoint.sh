@@ -2,6 +2,7 @@
 
 echo "I am here"
 echo "Print Refs"
+echo "Grep"
 
 echo "${GITHUB_REF}"
 
@@ -38,8 +39,11 @@ master_lib_hash=`git rev-parse HEAD`
 
 echo "Hash: ${master_lib_hash} -> ${lib_hash}"
 
-git branch --contains "${lib_hash}"
-
+if (git branch --contains "${lib_hash}" | grep master); then
+    echo "Yes"
+else
+    echo "No"
+fi
 
 echo "::set-output name=fails::0"
 
