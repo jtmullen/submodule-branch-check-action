@@ -36,7 +36,7 @@ if [ "${master_lib_hash}" == "${lib_hash}" ]; then
     echo "PASS"
 fi
 
-if (${NOEXIST}); then
+if [ -z "${NOEXIST}" ]; then
     echo "Huh"
 fi
 
