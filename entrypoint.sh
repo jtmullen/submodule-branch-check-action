@@ -36,6 +36,10 @@ if [ "${master_lib_hash}" == "${lib_hash}" ]; then
     echo "PASS"
 fi
 
+if (${NOEXIST}); then
+    echo "Huh"
+fi
+
 if (git branch --contains "${lib_hash}" | grep master); then
     echo "Yes"
 else
