@@ -19,7 +19,8 @@ git checkout "${BASE_BRANCH}"
 git submodule init
 git submodule update
 
-cd Libraries
+echo "Switch to submodule at: ${INPUT_PATH}"
+cd "${INPUT_PATH}"
 lib_hash=`git rev-parse HEAD`
 
 cd ..
