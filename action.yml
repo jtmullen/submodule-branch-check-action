@@ -5,6 +5,9 @@ branding:
   icon: 'hash'
   color: 'orange'
 inputs:
+  path:
+    descripton: "The path to the submodule"
+    required: true
   branch:
     description: "Which branch the submodule must be on"
     required: false
