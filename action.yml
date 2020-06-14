@@ -8,6 +8,7 @@ inputs:
   path:
     descripton: "The path to the submodule"
     required: true
+    default: ''
   branch:
     description: "Which branch the submodule must be on"
     required: false

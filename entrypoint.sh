@@ -56,7 +56,7 @@ pass () {
 }
 
 ## Check if on required branch
-if [[ -v INPUT_BRANCH ]]; then
+if [[ -z INPUT_BRANCH ]]; then
 	echo "Check for submodule on branch ${INPUT_BRANCH}"
 	BRANCHES=`git branch -r --contains ${SUBMODULE_HASH}`
 	echo "${BRANCHES}" | grep "/${INPUT_BRANCH}$" || fail "Submodule ${INPUT_PATH} Hash ${SUBMODULE_HASH} is not on branch ${INPUT_BRANCH}"
