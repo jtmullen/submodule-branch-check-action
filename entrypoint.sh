@@ -51,6 +51,7 @@ fail () {
 }
 
 pass () {
+    echo "PASS: $1"
 	echo "::set-output name=fails::"
 	exit 0	
 }
@@ -64,8 +65,8 @@ if [[ -z INPUT_BRANCH ]]; then
 fi
 
 ## If they are the same pass
+echo "Check if submodule unchanged from ${BASE_BRANCH}"
 if [ "${master_lib_hash}" == "${lib_hash}" ]; then
-    echo "Check if submodule unchanged from ${BASE_BRANCH}"
     pass "${INPUT_PATH} is unchanged from ${BASE_BRANCH}"
 fi
 
