@@ -8,10 +8,10 @@ echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
 
 cd "${GITHUB_WORKSPACE}"
 
-git config --global user.email "submodule@github.com"
-git config --global user.name "GitHub Submodules Action"
+git config --global user.email "action@github.com"
+git config --global user.name "GitHub Submodule Check Action"
 
-git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/
+git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
 REMOTES=`git fetch --all -p`
 
 git checkout "${BASE_BRANCH}"
