@@ -1,5 +1,5 @@
 # submodule-branch-check-action
-A {github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version on the base branch (for a PR) and that the new submodule version is on a specific branch (optional). 
+A [github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version on the base branch (for a PR) and that the new submodule version is on a specific branch (optional). 
 
 Currently, there are some limitations:
 * Only supports run on pull requests, behaviors on other triggers are undefined
