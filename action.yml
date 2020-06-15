@@ -12,6 +12,10 @@ inputs:
     description: "Which branch the submodule must be on"
     required: false
     default: ''
+  token:
+    description: "Token for accessing the Submodule"
+    required: false
+    default: ''
 outputs:
   fails:
     description: "Cause of failure, if run failed"
