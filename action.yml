@@ -1,6 +1,6 @@
 name: 'Submodule Branch Check'
 author: 'jtmullen'
-description: 'Check the branch and commit of a submodule'
+description: 'Check that the commit of a submodule is on a specific branch descended from the previous one'
 branding:
   icon: 'corner-down-right'
   color: 'orange'
