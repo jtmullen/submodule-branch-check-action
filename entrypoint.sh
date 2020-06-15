@@ -20,8 +20,10 @@ git config --global user.name "GitHub Submodule Check Action"
 ## Use given token if provided, otherwise Github token
 if [[ ! -z INPUT_TOKEN ]]; then
     TOKEN="${INPUT_TOKEN}"
+    echo "Input Token"
 else
-    TOKEN="$GITHUB_TOKEN}"
+    TOKEN="${GITHUB_TOKEN}"
+    echo "GH token"
 fi
 
 git remote set-url origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git/"
