@@ -17,15 +17,6 @@ cd "${GITHUB_WORKSPACE}" || die "Error: Cannot change directory to Github Worksp
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Submodule Check Action"
 
-## Use given token if provided, otherwise Github token
-if [[ ! -z INPUT_TOKEN ]]; then
-    TOKEN="${INPUT_TOKEN}"
-    echo "Input Token"
-else
-    TOKEN="${GITHUB_TOKEN}"
-    echo "GH token"
-fi
-
 ## If given an input token we are using SSH, otherwise HTTPS is easier w/Github Token
 if [[ ! -z INPUT_TOKEN ]]; then
 	echo "Use SSH with Given Token"
@@ -40,7 +31,7 @@ if [[ ! -z INPUT_TOKEN ]]; then
 	echo "${INPUT_TOKEN}" > /root/.ssh/ssh.key
 	chmod 600 /root/.ssh/ssh.key
 	export GIT_SSH_COMMAND="ssh -i /root/.ssh/ssh.key"
-	git remote set-url origin git@github.com:${REPO}.git/"
+	git remote set-url origin "git@github.com:${REPO}.git/"
 else
 	echo "Use HTTPS with Github Token"
 	git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
