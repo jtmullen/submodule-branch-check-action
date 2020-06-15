@@ -17,7 +17,14 @@ cd "${GITHUB_WORKSPACE}" || die "Error: Cannot change directory to Github Worksp
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Submodule Check Action"
 
-git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
+## Use given token if provided, otherwise Github token
+if [[ ! -z INPUT_TOKEN ]]; then
+    TOKEN="${INPUT_TOKEN}"
+else
+    TOKEN="$GITHUB_TOKEN}"
+fi
+
+git remote set-url origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git/"
 REMOTES=`git fetch --all -p`
 
 ## Check for submodule valid
