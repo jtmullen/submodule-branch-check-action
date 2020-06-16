@@ -14,20 +14,11 @@ echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
 
 cd "${GITHUB_WORKSPACE}" || die "Error: Cannot change directory to Github Workspace"
 
+git config --global user.email "action@github.com"
+git config --global user.name "GitHub Submodule Check Action"
 
-## If given an input token we are using SSH, otherwise HTTPS is easier w/Github Token
-if [[ ! -z INPUT_TOKEN ]]; then
-	echo "Set actor"
-	git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-	git config --global user.name "${GITHUB_ACTOR}"
-	echo "Use Given Token"
-	git remote set-url origin "https://${INPUT_TOKEN}@github.com/${REPO}.git/"
-else
-	git config --global user.email "action@github.com"
-	git config --global user.name "GitHub Submodule Check Action"
-	echo "Use Github Token"
-	git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
-fi
+git remote set-url origin "https://x-access-token:${INPUT_TOKEN}@github.com/${REPO}.git/"
+
 
 REMOTES=`git fetch --all -p`
 
