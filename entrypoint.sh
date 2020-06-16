@@ -17,6 +17,7 @@ cd "${GITHUB_WORKSPACE}" || die "Error: Cannot change directory to Github Worksp
 
 ## If given an input token we are using SSH, otherwise HTTPS is easier w/Github Token
 if [[ ! -z INPUT_TOKEN ]]; then
+	echo "Set me"
 	git config --global user.email "jt11mullen@gmail.com"
 	git config --global user.name "jtmullen"
 	echo "Use Given Token"
