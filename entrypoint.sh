@@ -30,7 +30,9 @@ echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || die "Error: path is not a submo
 
 git checkout "${BRANCH}"
 git submodule init "${INPUT_PATH}"
+echo "Init done"
 git submodule update "${INPUT_PATH}"
+echo "Update done"
 
 echo "Switch to submodule at: ${INPUT_PATH}"
 cd "${INPUT_PATH}" || die "Error: Cannot change directory to the submodule"
