@@ -19,21 +19,10 @@ git config --global user.name "GitHub Submodule Check Action"
 
 ## If given an input token we are using SSH, otherwise HTTPS is easier w/Github Token
 if [[ ! -z INPUT_TOKEN ]]; then
-	echo "Use SSH with Given Token"
-	sig=`cat /github.sig`
-	challenge=`ssh-keyscan -t rsa github.com 2>/dev/null | ssh-keygen -lf -`
-	if [ "$challenge" != "$sig" ]; then
-		die "Failed to verify github signature"
-	fi
-	mkdir /root/.ssh/
-	chmod 700 /root/.ssh/
-	ssh-keyscan github.com 2>/dev/null >> /root/.ssh/known_hosts
-	echo "${INPUT_TOKEN}" > /root/.ssh/ssh.key
-	chmod 600 /root/.ssh/ssh.key
-	export GIT_SSH_COMMAND="ssh -i /root/.ssh/ssh.key"
-	git remote set-url origin "git@github.com:${REPO}.git/"
+	echo "Use Given Token"
+	git remote set-url origin "https://${INPUT_TOKEN}:x-oauth-basic@github.com/${REPO}.git/"
 else
-	echo "Use HTTPS with Github Token"
+	echo "Use Github Token"
 	git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git/"
 fi
 
