@@ -5,12 +5,51 @@ error () {
 	exit 1
 }
 
+echo "Branch test checkout action for submodules"
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
 BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
 echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
+
+echo "Move to github directory"
+cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
+
+ls
+
+
+## Check for submodule valid
+echo "CHECK SM"
+SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
+echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
+
+cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
+
+ls
+
+git log
+
+
+echo "Back to gh workspace"
+cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
+
+echo "LOG"
+git log
+
+echo "Checkout master"
+
+git checkout master
+
+echo "Done"
+
+
+exit 1
+
+
+### IGNORE FOR NOW
+
+
 
 cd "${GITHUB_WORKSPACE}" || die "Error: Cannot change directory to Github Workspace"
 
