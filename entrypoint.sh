@@ -13,64 +13,11 @@ BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
 echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
 
-echo "Move to github directory"
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
-
-## Check for submodule valid
-echo "CHECK SM"
-SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
-ls
-
-cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
-ls
-
-echo "Back to gh workspace"
-cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
-
-echo "Checkout master"
-
-git checkout master
-
-echo "Done"
-
-git submodule init "${INPUT_PATH}"
-git submodule update "${INPUT_PATH}"
-
-cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
-
-echo "SM hash after update"
-git rev-parse HEAD
-
-exit 1
-
-
-### IGNORE FOR NOW
-
-
-
-cd "${GITHUB_WORKSPACE}" || die "Error: Cannot change directory to Github Workspace"
-
-git config --global user.email "action@github.com"
-git config --global user.name "GitHub Submodule Check Action"
-
-## Use given token if provided, otherwise Github token
-if [[ ! -z INPUT_TOKEN ]]; then
-    TOKEN="${INPUT_TOKEN}"
-    echo "Input Token"
-else
-    TOKEN="${GITHUB_TOKEN}"
-    echo "GH token"
-fi
-
-git remote set-url origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git/"
-REMOTES=`git fetch --all -p`
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || die "Error: path is not a submodule"
-
-
+echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
 
 git checkout "${BRANCH}"
 git submodule init "${INPUT_PATH}"
@@ -80,7 +27,7 @@ echo "Switch to submodule at: ${INPUT_PATH}"
 cd "${INPUT_PATH}" || die "Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
-cd ..
+cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory back to Github Workspace" 
 git checkout "${BASE_BRANCH}"
 
 git submodule update "${INPUT_PATH}"
