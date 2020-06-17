@@ -20,14 +20,13 @@ cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Work
 echo "CHECK SM"
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
+ls
 
 cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
+ls
 
 echo "Back to gh workspace"
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
-
-echo "LOG"
-git log
 
 echo "Checkout master"
 
@@ -35,6 +34,7 @@ git checkout master
 
 echo "Done"
 
+git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
 
 cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
