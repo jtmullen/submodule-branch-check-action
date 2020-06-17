@@ -5,7 +5,6 @@ error () {
 	exit 1
 }
 
-echo "Branch test checkout action for submodules"
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
