@@ -43,6 +43,7 @@ git checkout master
 
 echo "Done"
 
+git submodule update "${INPUT_PATH}"
 
 exit 1
 
