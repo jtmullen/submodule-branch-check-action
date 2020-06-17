@@ -16,20 +16,12 @@ echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
 echo "Move to github directory"
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
 
-ls
-
-
 ## Check for submodule valid
 echo "CHECK SM"
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
 
 cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
-
-ls
-
-git log
-
 
 echo "Back to gh workspace"
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
@@ -44,6 +36,11 @@ git checkout master
 echo "Done"
 
 git submodule update "${INPUT_PATH}"
+
+cd "${INPUT_PATH}" || error "Error: cannot move to sm path"
+
+echo "SM hash after update"
+git rev-parse HEAD
 
 exit 1
 
