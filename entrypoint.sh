@@ -10,10 +10,21 @@ jq . "${GITHUB_EVENT_PATH}"
 error "Done"
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
-PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
-BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
-BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
-echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH}"
+
+if (jq -e 'has("pull_request")'); then
+	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
+	BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
+	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
+	echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH} on ${REPO}"
+elif (jq -e 'has("after")'); then
+	BRANCH=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
+	BASE_BRANCH=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
+	BRANCH_NAME=`jq -r ".ref" "${GITHUB_EVENT_PATH}"`
+	echo "Run for push of ${BRANCH_NAME} from ${BASE_BRANCH} to ${BRANCH} on ${REPO}"
+else
+	error "Unknown Github Event Path"
+fi
+
 
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
 
