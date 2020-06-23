@@ -7,12 +7,12 @@ error () {
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
-if (jq -e 'has("pull_request")'); then
+if [ (jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]; then
 	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
 	BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
 	echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH} on ${REPO}"
-elif (jq -e 'has("after")'); then
+elif [ (jq -r ".after" "${GITHUB_EVENT_PATH}") != "null" ]; then
 	BRANCH=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
 	BASE_BRANCH=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
 	BRANCH_NAME=`jq -r ".ref" "${GITHUB_EVENT_PATH}"`
