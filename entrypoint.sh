@@ -5,10 +5,6 @@ error () {
 	exit 1
 }
 
-jq . "${GITHUB_EVENT_PATH}"
-
-error "Done"
-
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
 if (jq -e 'has("pull_request")'); then
