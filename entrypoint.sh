@@ -9,14 +9,14 @@ REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
 if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
-	BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
-	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
-	echo "Run for PR # ${PR} of ${BRANCH} into ${BASE_BRANCH} on ${REPO}"
+	TO_REF=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
+	FROM_REF=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
+	echo "Run for PR # ${PR} of ${TO_REF} into ${FROM_REF} on ${REPO}"
 elif [[ $(jq -r ".after" "${GITHUB_EVENT_PATH}") != "null" ]]; then
-	BRANCH=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
-	BASE_BRANCH=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
+	TO_REF=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
+	FROM_REF=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
 	BRANCH_NAME=`jq -r ".ref" "${GITHUB_EVENT_PATH}"`
-	echo "Run for push of ${BRANCH_NAME} from ${BASE_BRANCH} to ${BRANCH} on ${REPO}"
+	echo "Run for push of ${BRANCH_NAME} from ${FROM_REF} to ${TO_REF} on ${REPO}"
 else
 	error "Unknown Github Event Path"
 fi
@@ -28,7 +28,7 @@ cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Work
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
 
-git checkout "${BRANCH}"
+git checkout "${TO_REF}"
 git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
 
@@ -37,7 +37,7 @@ cd "${INPUT_PATH}" || die "Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory back to Github Workspace" 
-git checkout "${BASE_BRANCH}"
+git checkout "${FROM_REF}"
 
 git submodule update "${INPUT_PATH}"
 
@@ -69,11 +69,11 @@ fi
 ## If they are the same pass
 echo "Check if submodule unchanged"
 if [ "${master_lib_hash}" == "${lib_hash}" ]; then
-    pass "${INPUT_PATH} is unchanged from ${BASE_BRANCH}"
+    pass "${INPUT_PATH} is unchanged from ${FROM_REF}"
 fi
 
 ## Check that base hash is an ancestor of the ref hash
 echo "Check if old submodule has is parent of current"
-git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${BASE_BRANCH} is not an ancestor of that on ${BRANCH}"
+git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${FROM_REF} is not an ancestor of that on ${TO_REF}"
 
-pass "Valid submodule ${INPUT_PATH} on ${BRANCH}"
+pass "Valid submodule ${INPUT_PATH} on ${TO_REF}"
