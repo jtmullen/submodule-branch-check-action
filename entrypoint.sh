@@ -67,12 +67,13 @@ if [[ ! -z INPUT_BRANCH ]]; then
 fi
 
 ## If they are the same pass
-echo "Check if submodule unchanged from ${BASE_BRANCH}"
+echo "Check if submodule unchanged"
 if [ "${master_lib_hash}" == "${lib_hash}" ]; then
     pass "${INPUT_PATH} is unchanged from ${BASE_BRANCH}"
 fi
 
 ## Check that base hash is an ancestor of the ref hash
+echo "Check if old submodule has is parent of current"
 git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${BASE_BRANCH} is not an ancestor of that on ${BRANCH}"
 
 pass "Valid submodule ${INPUT_PATH} on ${BRANCH}"
