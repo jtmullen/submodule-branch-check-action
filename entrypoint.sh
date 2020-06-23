@@ -5,6 +5,9 @@ error () {
 	exit 1
 }
 
+jq . "${GITHUB_EVENT_PATH}"
+
+error "Done"
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
