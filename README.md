@@ -41,7 +41,7 @@ jobs:
 		token: ${{ secrets.PAT_for_Private_Submodule }}
 		fetch-depth: 0
     - name: Check Submodule Name
-      uses: jtmullen/submodule-branch-check-action@v0.1.0
+      uses: jtmullen/submodule-branch-check-action@v0.3.0-beta
       with:
         path: "path/to/submodule"
         branch: "master"
@@ -50,7 +50,7 @@ jobs:
 ### Usage Notes
 To ensure this action runs correctly you must checkout both the current repo and the submodule repo as expected with the appropriate amount of information about the repo history included. As shown above, the [Github Checkout Action](https://github.com/actions/checkout/) is a good way to set this up. Below are the main requirements for doing so:
 
-**Fetch Depth:** This action requires enough git history to have access to the last commit on both branches on the PR in the repo the action is run from and enough history to determine the relationship between the respecitive submodule commits for those two branches. A fetch depth of 0 will checkout the full history. Depending on the workflow on your two repos you may be able to safely cap this at a specific depth.
+**Fetch Depth:** This action requires enough git history to have access to both commits involved in the push or PR in the repo the action is run from. It also need enough history to determine the relationship between the respecitive submodule commits for those two branches. A fetch depth of 0 will checkout the full history. Depending on the workflow on your two repos you may be able to safely cap this at a specific depth. For Pull Request actions a cap of 1 (the default) for the repo it is run on will work as PRs always use the most recent version on each branch. 
 
 **Token:** If your submodule is private, provide a personal access token repo level access for the submodule. 
 
