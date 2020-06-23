@@ -1,8 +1,6 @@
 # submodule-branch-check-action
 A [github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version on the base branch (for a PR) and that the new submodule version is on a specific branch (optional). 
 
-Currently, there are some limitations:
-* Only supports run on pull requests, behaviors on other triggers are undefined
 
 ## Inputs
 ### `path`
@@ -24,7 +22,7 @@ To add to a repo create a workflow file (such as `.github/workflows/check-submod
 ```yml
 name: check-submodule
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   check-submodules:
@@ -60,5 +58,4 @@ To ensure this action runs correctly you must checkout both the current repo and
 
 You can also see [where this is used](https://github.com/search?l=YAML&q=submodule-branch-check-action&type=Code)
 
-## TODO
-- [ ] Have version for push trigger
+*Note: this was developed for several private repos so many uses will not be listed above*
