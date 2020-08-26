@@ -62,7 +62,7 @@ pass () {
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	echo "Check if submodule has been changed on ${TO_REF}"
 	CHANGED=`git diff --name-only ${TO_REF}...${FROM_REF}`
-	echo "${CHANGED}" | grep "$[INPUT_PATH}" | pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
+	echo "${CHANGED}" | grep "${INPUT_PATH}" | pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
 	echo "Submodule has been changed"
 fi
 
