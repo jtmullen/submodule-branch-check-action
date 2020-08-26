@@ -31,6 +31,7 @@ echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a sub
 
 echo "Log"
 echo `git --version`
+echo `git fetch --depth=100`
 echo `git branch`
 
 git checkout "${TO_REF}"
