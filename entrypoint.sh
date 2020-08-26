@@ -30,7 +30,8 @@ echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a sub
 
 
 echo "Log"
-echo `git log --pretty=oneline`
+echo `git --version`
+echo `git branch`
 
 git checkout "${TO_REF}"
 git submodule init "${INPUT_PATH}"
