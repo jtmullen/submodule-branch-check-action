@@ -21,13 +21,14 @@ else
 	error "Unknown Github Event Path"
 fi
 
-
+echo "Move to workspace"
 cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
 
+echo `ls`
 git checkout "${TO_REF}"
 git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
