@@ -53,7 +53,7 @@ fail () {
 }
 
 pass () {
-    echo "PASS: $1"
+	echo "PASS: $1"
 	echo "::set-output name=fails::"
 	exit 0	
 }
