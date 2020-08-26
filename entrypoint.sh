@@ -58,6 +58,14 @@ pass () {
 	exit 0	
 }
 
+## Pass if they are unchanged
+if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
+	echo "Check if submodule has been changed on ${TO_REF}"
+	CHANGED=`git diff --name-only ${TO_REF}...${FROM_REF}`
+	echo "${CHANGED}" | grep "$[INPUT_PATH}" | pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
+	echo "Submodule has been changed"
+fi
+
 ## Check if on required branch
 if [[ ! -z "${INPUT_BRANCH}" ]]; then
 	echo "Check for submodule on branch ${INPUT_BRANCH}"
@@ -69,7 +77,7 @@ fi
 ## If they are the same pass
 echo "Check if submodule unchanged"
 if [ "${master_lib_hash}" == "${lib_hash}" ]; then
-    pass "${INPUT_PATH} is unchanged from ${FROM_REF}"
+    pass "${INPUT_PATH} is the same as ${FROM_REF}"
 fi
 
 ## Check that base hash is an ancestor of the ref hash
