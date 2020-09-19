@@ -65,6 +65,7 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	echo "Check if submodule has been changed on ${TO_REF}"
 	CHANGED=`git diff --name-only origin/${FROM_REF}...origin/${TO_REF}`
+	echo "${CHANGED}"
 	echo "${CHANGED}" | grep "${INPUT_PATH}" | pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
 	echo "Submodule has been changed"
 fi
