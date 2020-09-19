@@ -7,11 +7,13 @@ error () {
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
+isPR=false
 if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
 	TO_REF=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 	FROM_REF=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
 	echo "Run for PR # ${PR} of ${TO_REF} into ${FROM_REF} on ${REPO}"
+	isPR=true
 elif [[ $(jq -r ".after" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	TO_REF=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
 	FROM_REF=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
@@ -63,12 +65,16 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 
 ## Pass if they are unchanged
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
-	echo "Check if submodule has been changed on ${TO_REF}"
-	CHANGED=`git diff --name-only origin/${FROM_REF}...origin/${TO_REF}`\
-	if ! grep -q "^${INPUT_PATH}$" "${CHANGED}"; then
-		pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
-	fi
-	echo "Submodule has been changed"
+	if [[ "${isPR}" = true ]]; then 
+		echo "Check if submodule has been changed on ${TO_REF}"
+		CHANGED=`git diff --name-only origin/${FROM_REF}...origin/${TO_REF}`\
+		if ! grep -q "^${INPUT_PATH}$" "${CHANGED}"; then
+			pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
+		fi
+		echo "Submodule has been changed"
+	else
+		echo "Not a PR for Pass if Unchanged"
+	fi	
 fi
 
 cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
