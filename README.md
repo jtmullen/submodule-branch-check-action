@@ -1,5 +1,5 @@
 # submodule-branch-check-action
-A [github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version on the base branch (for a PR) and that the new submodule version is on a specific branch (optional). 
+A [github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version (or not changing) and that the new submodule version is on a specific branch (optional). 
 
 
 ## Inputs
@@ -13,9 +13,9 @@ The branch that the submodule version must be on.
 This is optional, if not included the submodule will only be checked for progression, not commit presence on a specific branch. 
 
 ### `pass_if_unchanged`
-If the check should automatically pass if the submodule was not changed on this branch (even if it has subsequently been changed on master). 
+If the check should automatically pass if the submodule was not changed on this branch. Only available on a PR, not a push. 
 
-This is optional, if included an unchanged submodule results in automatic pass. 
+This is optional, if included an unchanged submodule results in automatic pass. If set this option will be ignored if the event it a push. 
 
 ## Outputs
 ### `fails`
