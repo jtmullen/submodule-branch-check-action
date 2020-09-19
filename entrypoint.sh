@@ -23,13 +23,11 @@ else
 	error "Unknown Github Event Path"
 fi
 
-echo "Move to workspace"
 cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace"
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
-
 
 git checkout "${TO_REF}"
 git submodule init "${INPUT_PATH}"
@@ -69,7 +67,7 @@ if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 		echo "Check if submodule has been changed on ${TO_REF}"
 		CHANGED=`git diff --name-only origin/${FROM_REF}...origin/${TO_REF}`
 		if ! grep -q "^${INPUT_PATH}$" "${CHANGED}"; then
-			pass "Submodule ${INPUT_PATH} has not been changed on branch: ${TO_REF}"
+			pass "Submodule ${INPUT_PATH} has not been changed on branch ${TO_REF}"
 		fi
 		echo "Submodule has been changed"
 	else
