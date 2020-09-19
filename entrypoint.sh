@@ -7,11 +7,13 @@ error () {
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
+isPR=false
 if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
 	TO_REF=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 	FROM_REF=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
 	echo "Run for PR # ${PR} of ${TO_REF} into ${FROM_REF} on ${REPO}"
+	isPR=true
 elif [[ $(jq -r ".after" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	TO_REF=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
 	FROM_REF=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
@@ -21,8 +23,7 @@ else
 	error "Unknown Github Event Path"
 fi
 
-
-cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
+cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace"
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
@@ -33,15 +34,15 @@ git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
 
 echo "Switch to submodule at: ${INPUT_PATH}"
-cd "${INPUT_PATH}" || die "Error: Cannot change directory to the submodule"
+cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
-cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory back to Github Workspace" 
+cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
 git checkout "${FROM_REF}"
 
 git submodule update "${INPUT_PATH}"
 
-cd "${INPUT_PATH}" 
+cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH_BASE=`git rev-parse HEAD`
 
 echo "Submodule ${INPUT_PATH} Changed from: ${SUBMODULE_HASH_BASE} to ${SUBMODULE_HASH}"
@@ -53,10 +54,28 @@ fail () {
 }
 
 pass () {
-    echo "PASS: $1"
+	echo "PASS: $1"
 	echo "::set-output name=fails::"
 	exit 0	
 }
+
+cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
+
+## Pass if they are unchanged
+if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
+	if [[ "${isPR}" = true ]]; then 
+		echo "Check if submodule has been changed on ${TO_REF}"
+		CHANGED=`git diff --name-only origin/${FROM_REF}...origin/${TO_REF}`
+		if ! grep -q "^${INPUT_PATH}$" "${CHANGED}"; then
+			pass "Submodule ${INPUT_PATH} has not been changed on branch ${TO_REF}"
+		fi
+		echo "Submodule has been changed"
+	else
+		echo "Note: Not a PR - Pass if Unchanged ignored"
+	fi	
+fi
+
+cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 
 ## Check if on required branch
 if [[ ! -z "${INPUT_BRANCH}" ]]; then
@@ -69,7 +88,7 @@ fi
 ## If they are the same pass
 echo "Check if submodule unchanged"
 if [ "${master_lib_hash}" == "${lib_hash}" ]; then
-    pass "${INPUT_PATH} is unchanged from ${FROM_REF}"
+    pass "${INPUT_PATH} is the same as ${FROM_REF}"
 fi
 
 ## Check that base hash is an ancestor of the ref hash

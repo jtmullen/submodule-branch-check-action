@@ -12,8 +12,8 @@ inputs:
     description: "Which branch the submodule must be on"
     required: false
     default: ''
-  token:
-    description: "Token for accessing the Submodule"
+  pass_if_unchanged:
+    description: "If the check should always pass if the submodule hasn't been changed on a branch/commit"
     required: false
     default: ''
 outputs:
