@@ -12,6 +12,11 @@ The branch that the submodule version must be on.
 
 This is optional, if not included the submodule will only be checked for progression, not commit presence on a specific branch. 
 
+### `pass_if_unchanged`
+If the check should automatically pass if the submodule was not changed on this branch (even if it has subsequently been changed on master). 
+
+This is optional, if included an unchanged submodule results in automatic pass. 
+
 ## Outputs
 ### `fails`
 The reason the action failed (if any). The check will stop at the first failure. 
@@ -50,7 +55,7 @@ jobs:
 ### Usage Notes
 To ensure this action runs correctly you must checkout both the current repo and the submodule repo as expected with the appropriate amount of information about the repo history included. As shown above, the [Github Checkout Action](https://github.com/actions/checkout/) is a good way to set this up. Below are the main requirements for doing so:
 
-**Fetch Depth:** On the repo that this action is running on you will need a fetch depth of 2 for pushes or 1 (default) for Pull Requests. On the submodule this will vary based on your workflow. You will need enough history for this action to determine the relationship between the submodule versions on the version being compared. If you are always working with very recent versions of the submodule this may be a small number, otherwise it could be much larger. 
+**Fetch Depth:** Your required fetch depth will vary based on use case. On the repo that this action is running on you will need a fetch depth of 2 for pushes or 1 (default) for Pull Requests unless you are using the pass if unchanged option, then you will require enough to view the history of both branches. On the submodule this will vary based on your workflow. You will need enough history for this action to determine the relationship between the submodule versions on the version being compared. If you are always working with very recent versions of the submodule this may be a small number, otherwise it could be much larger. 
 
 **Token:** If your submodule is private, provide a personal access token repo level access for the submodule so it can be checked out. 
 
