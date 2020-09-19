@@ -22,26 +22,27 @@ else
 fi
 
 echo "Move to workspace"
-cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory to Github Workspace"
+cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace"
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
+
 
 git checkout "${TO_REF}"
 git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
 
 echo "Switch to submodule at: ${INPUT_PATH}"
-cd "${INPUT_PATH}" || die "Error: Cannot change directory to the submodule"
+cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
-cd "${GITHUB_WORKSPACE}" || error "Error: Cannot change directory back to Github Workspace" 
+cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
 git checkout "${FROM_REF}"
 
 git submodule update "${INPUT_PATH}"
 
-cd "${INPUT_PATH}" 
+cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH_BASE=`git rev-parse HEAD`
 
 echo "Submodule ${INPUT_PATH} Changed from: ${SUBMODULE_HASH_BASE} to ${SUBMODULE_HASH}"
@@ -58,13 +59,17 @@ pass () {
 	exit 0	
 }
 
+cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
+
 ## Pass if they are unchanged
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	echo "Check if submodule has been changed on ${TO_REF}"
-	CHANGED=`git diff --name-only ${FROM_REF}...${TO_REF}`
+	CHANGED=`git diff --name-only origin/${FROM_REF}...origin/${TO_REF}`
 	echo "${CHANGED}" | grep "${INPUT_PATH}" | pass "Submodule ${INPUT_PATH} has not been changed on ${TO_REF}"
 	echo "Submodule has been changed"
 fi
+
+cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 
 ## Check if on required branch
 if [[ ! -z "${INPUT_BRANCH}" ]]; then
