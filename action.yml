@@ -16,10 +16,6 @@ inputs:
     description: "If the check should always pass if the submodule hasn't been changed on a branch/commit"
     required: false
     default: ''
-  token:
-    description: "Token for accessing the Submodule"
-    required: false
-    default: ''
 outputs:
   fails:
     description: "Cause of failure, if run failed"
