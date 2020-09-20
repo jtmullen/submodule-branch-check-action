@@ -28,10 +28,10 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
 	echo "Checkout Branch Histories"
-	if [[ ! -z "${INPUT_FETCH-DEPTH}" ]]; then
-		echo "Histories to depth: ${INPUT_FETCH-DEPTH}"
-		git fetch origin "${TO_REF}" --depth "${INPUT_FETCH-DEPTH}"
-		git fetch origin "${FROM_REF}" --depth "${INPUT_FETCH-DEPTH}"
+	if [[ ! -z "${INPUT_FETCH_DEPTH}" ]]; then
+		echo "Histories to depth: ${INPUT_FETCH_DEPTH}"
+		git fetch origin "${TO_REF}" --depth "${INPUT_FETCH_DEPTH}"
+		git fetch origin "${FROM_REF}" --depth "${INPUT_FETCH_DEPTH}"
 	else
 		echo "Full Brach Histories"
 		git fetch origin "${TO_REF}"
