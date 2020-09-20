@@ -28,9 +28,13 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
 	echo "Checkout Branch Histories"
-	git fetch origin "${TO_REF}" --depth 100
-	echo "Checkout From Ref"
-	git fetch origin "${FROM_REF}" --depth 100
+	if [[ ! -z "${INPUT_FETCH_DEPTH}" ]]; then
+		git fetch origin "${TO_REF}" --depth "${INPUT_FETCH-DEPTH}"
+		git fetch origin "${FROM_REF}" --depth "${INPUT_FETCH-DEPTH}"
+	else
+		git fetch origin "${TO_REF}"
+		git fetch origin "${FROM_REF}"
+	fi
 fi
 
 ## Check for submodule valid
