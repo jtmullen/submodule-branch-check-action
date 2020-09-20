@@ -29,7 +29,7 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
 
-git checkout "${TO_REF}"
+git checkout "origin/${TO_REF}"
 git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
 
@@ -38,7 +38,7 @@ cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the su
 SUBMODULE_HASH=`git rev-parse HEAD`
 
 cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
-git checkout "${FROM_REF}"
+git checkout "origin/${FROM_REF}"
 
 git submodule update "${INPUT_PATH}"
 
