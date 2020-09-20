@@ -29,6 +29,7 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 if [[ "${isPR}" = true ]]; then
 	echo "Checkout Branch Histories"
 	git fetch origin "${TO_REF}" --depth 100
+	echo "Checkout From Ref"
 	git fetch origin "${FROM_REF}" --depth 100
 fi
 
