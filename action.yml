@@ -16,6 +16,10 @@ inputs:
     description: "If the check should always pass if the submodule hasn't been changed on a branch/commit"
     required: false
     default: ''
+  fetch_depth:
+    description: "The fetch depth for both involved branches if run on a PR"
+    required: false
+    default: ''
 outputs:
   fails:
     description: "Cause of failure, if run failed"
