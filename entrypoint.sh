@@ -25,11 +25,18 @@ fi
 
 cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace"
 
+## Fetch both branches for PR
+if [[ "${isPR}" = true ]]; then
+	echo "Checkout Branch Histories"
+	git fetch origin "${TO_REF}" --depth 100
+	git fetch origin "${FROM_REF}" --depth 100
+fi
+
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
 
-git checkout "origin/${TO_REF}"
+git checkout "${TO_REF}"
 git submodule init "${INPUT_PATH}"
 git submodule update "${INPUT_PATH}"
 
@@ -38,7 +45,7 @@ cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the su
 SUBMODULE_HASH=`git rev-parse HEAD`
 
 cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
-git checkout "origin/${FROM_REF}"
+git checkout "${FROM_REF}"
 
 git submodule update "${INPUT_PATH}"
 
