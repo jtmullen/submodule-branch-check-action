@@ -17,6 +17,11 @@ If the check should automatically pass if the submodule was not changed on this 
 
 This is optional, if included an unchanged submodule results in automatic pass. If set this option will be ignored if the event it a push. 
 
+### `fetch_depth`
+Fetch depth for the two relevant branches on a PR trigger. The action will checkout the two branches to this depth, if you know your branches are relatively short lived compared to the full history of your repo this can save you some processing time, network traffic, etc. by only checking out enough to cover your needs. 
+
+This is optional, if not included it will default to full history for the branches.
+
 ## Outputs
 ### `fails`
 The reason the action failed (if any). The check will stop at the first failure. 
@@ -36,8 +41,6 @@ jobs:
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v2
-          with:
-              fetch-depth: 2
     - name: Checkout submodule repo
       uses: actions/checkout@v2
           with:
@@ -50,12 +53,14 @@ jobs:
       with:
         path: "path/to/submodule"
         branch: "master"
+        fetch_depth: "50"
+        pass_if_unchanged: "true"
 ```
 
 ### Usage Notes
 To ensure this action runs correctly you must checkout both the current repo and the submodule repo as expected with the appropriate amount of information about the repo history included. As shown above, the [Github Checkout Action](https://github.com/actions/checkout/) is a good way to set this up. Below are the main requirements for doing so:
 
-**Fetch Depth:** Your required fetch depth will vary based on use case. On the repo that this action is running on you will need a fetch depth of 2 for pushes or 1 (default) for Pull Requests unless you are using the pass if unchanged option, then you will require enough to view the history of both branches. On the submodule this will vary based on your workflow. You will need enough history for this action to determine the relationship between the submodule versions on the version being compared. If you are always working with very recent versions of the submodule this may be a small number, otherwise it could be much larger. 
+**Fetch Depth:** This action handles the fetching for the repo it is run on (checkout action does not have multibranch depth option at this time). On the submodule this will vary based on your workflow. You will need enough history for this action to determine the relationship between the submodule versions on the version being compared. If you are always working with very recent versions of the submodule this may be a small number, otherwise it could be much larger. 
 
 **Token:** If your submodule is private, provide a personal access token repo level access for the submodule so it can be checked out. 
 
