@@ -20,7 +20,6 @@ inputs:
     description: "The fetch depth for both involved branches if run on a PR"
     required: false
     default: ''
-    
 outputs:
   fails:
     description: "Cause of failure, if run failed"
