@@ -27,11 +27,11 @@ cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to 
 
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
-	echo "Checkout Branch Histories"
+	echo "Fetch Branch Histories"
 	if [[ ! -z "${INPUT_FETCH_DEPTH}" ]]; then
 		echo "Histories to depth: ${INPUT_FETCH_DEPTH}"
-		git fetch origin "${TO_REF}" --depth --recurse-submodules=no "${INPUT_FETCH_DEPTH}" || error "${LINENO}__Error: Could not fetch history of ${TO_REF}"
-		git fetch origin "${FROM_REF}" --depth --recurse-submodules=no "${INPUT_FETCH_DEPTH}" || error "${LINENO}__Error: Could not fetch history of ${FROM_REF}"
+		git fetch origin "${TO_REF}" --recurse-submodules=no --depth "${INPUT_FETCH_DEPTH}" || error "${LINENO}__Error: Could not fetch history of ${TO_REF}"
+		git fetch origin "${FROM_REF}" --recurse-submodules=no --depth "${INPUT_FETCH_DEPTH}" || error "${LINENO}__Error: Could not fetch history of ${FROM_REF}"
 	else
 		echo "Full Brach Histories"
 		git fetch origin --recurse-submodules=no "${TO_REF}" || error "${LINENO}__Error: Could not fetch history of ${TO_REF}"
