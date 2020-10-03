@@ -30,31 +30,31 @@ if [[ "${isPR}" = true ]]; then
 	echo "Checkout Branch Histories"
 	if [[ ! -z "${INPUT_FETCH_DEPTH}" ]]; then
 		echo "Histories to depth: ${INPUT_FETCH_DEPTH}"
-		git fetch origin "${TO_REF}" --depth "${INPUT_FETCH_DEPTH}"
-		git fetch origin "${FROM_REF}" --depth "${INPUT_FETCH_DEPTH}"
+		git fetch origin "${TO_REF}" --depth "${INPUT_FETCH_DEPTH}" || error "${LINENO}__Error: Could not fetch history of ${TO_REF}"
+		git fetch origin "${FROM_REF}" --depth "${INPUT_FETCH_DEPTH}" || error "${LINENO}__Error: Could not fetch history of ${FROM_REF}"
 	else
 		echo "Full Brach Histories"
-		git fetch origin "${TO_REF}"
-		git fetch origin "${FROM_REF}"
+		git fetch origin "${TO_REF}" || error "${LINENO}__Error: Could not fetch history of ${TO_REF}"
+		git fetch origin "${FROM_REF}" || error "${LINENO}__Error: Could not fetch history of ${FROM_REF}"
 	fi
 fi
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path is not a submodule"
+echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule"
 
-git checkout "${TO_REF}"
-git submodule init "${INPUT_PATH}"
-git submodule update "${INPUT_PATH}"
+git checkout "${TO_REF}" || error "${LINENO}__Error: Could not checkout ${TO_REF}"
+git submodule init "${INPUT_PATH}" || error "${LINENO}__Error: Could initialize submodule"
+git submodule update "${INPUT_PATH}" || error "${LINENO}__Error: Could not checkout submodule hash referenced by ${TO_REF} (is it pushed to remote?)"
 
 echo "Switch to submodule at: ${INPUT_PATH}"
 cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
 cd "${GITHUB_WORKSPACE}" || error "${LINENO}__Error: Cannot change directory to Github Workspace" 
-git checkout "${FROM_REF}"
+git checkout "${FROM_REF}"  || error "${LINENO}__Error: Could not checkout ${FROM_REF}"
 
-git submodule update "${INPUT_PATH}"
+git submodule update "${INPUT_PATH}"  || error "${LINENO}__Error: Could not checkout submodule hash referenced by ${FROM_REF} (is it pushed to remote?)"
 
 cd "${INPUT_PATH}" || error "${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH_BASE=`git rev-parse HEAD`
