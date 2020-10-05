@@ -60,7 +60,7 @@ jobs:
         branch: "master"
         fetch_depth: "50"
         pass_if_unchanged: true
-		require_head: true
+        require_head: true
 ```
 
 ### Usage Notes
