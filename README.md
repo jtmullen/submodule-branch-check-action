@@ -22,6 +22,11 @@ Fetch depth for the two relevant branches on a PR trigger. The action will check
 
 This is optional, if not included it will default to full history for the branches.
 
+### `require_head`
+If the submodule is required to be on the head (most recent commit) of the specified branch. Keep in mind that it is possible that this will pass on a PR at the time it is run but no longer be on the most recent at the time of merge. 
+
+This is optional, it will not be checked if not included. Including this, but not branch, will result in an error. 
+
 ## Outputs
 ### `fails`
 The reason the action failed (if any). The check will stop at the first failure. 
@@ -49,12 +54,13 @@ jobs:
               token: ${{ secrets.PAT_for_Private_Submodule }}
               fetch-depth: 0
     - name: Check Submodule Name
-      uses: jtmullen/submodule-branch-check-action@v0.5.1-beta
+      uses: jtmullen/submodule-branch-check-action@v0.6.0-beta
       with:
         path: "path/to/submodule"
         branch: "master"
         fetch_depth: "50"
-        pass_if_unchanged: "true"
+        pass_if_unchanged: true
+		require_head: true
 ```
 
 ### Usage Notes
