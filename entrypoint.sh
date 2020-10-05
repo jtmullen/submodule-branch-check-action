@@ -14,7 +14,7 @@ if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; the
 	FROM_HASH=`jq -r ".pull_request.base.sha" "${GITHUB_EVENT_PATH}"`
 	PR_BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
-	USER=`jq -r ".pull_request.user.login" "${GITHUB_EVENT_PATH}`
+	USER=`jq -r ".pull_request.user.login" "${GITHUB_EVENT_PATH}"`
 	echo "Run for PR # ${PR} of ${PR_BRANCH} into ${BASE_BRANCH} on ${REPO} by ${USER}"
 	echo "Hash ${TO_HASH} into ${FROM_HASH}"
 	isPR=true
