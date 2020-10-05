@@ -98,6 +98,17 @@ fi
 
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 
+## Check if most recent required
+if [[ ! -z "${INPUT_REQUIRE_HEAD" ]]; then
+	echo "Check if on most recent"
+	HEAD_SHA=`git rev-parse origin/${INPUT_BRANCH}`
+	if [ "${HEAD_SHA}" == "${SUBMODULE_HASH}" ]; then
+		pass "${INPUT_PATH} is the the most recent ${INPUT_BRANCH}"
+	else
+		fail "Submodule ${INPUT_PATH} is not on most recent ${INPUT_BRANCH}($HEAD_SHA)"
+	fi
+fi
+
 ## Check if on required branch
 if [[ ! -z "${INPUT_BRANCH}" ]]; then
 	echo "Check for submodule on branch ${INPUT_BRANCH}"
@@ -107,8 +118,8 @@ if [[ ! -z "${INPUT_BRANCH}" ]]; then
 fi
 
 ## If they are the same pass
-echo "Check if submodule unchanged"
-if [ "${master_lib_hash}" == "${lib_hash}" ]; then
+echo "Check if submodule is identical hash"
+if [ "${SUBMODULE_HASH_BASE}" == "${SUBMODULE_HASH}" ]; then
     pass "${INPUT_PATH} is the same as ${BASE_BRANCH}"
 fi
 
