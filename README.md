@@ -23,7 +23,7 @@ Fetch depth for the two relevant branches on a PR trigger. The action will check
 This is optional, if not included it will default to full history for the branches.
 
 ### `require_head`
-If the submodule is required to be on the head (most recent commit) of the specified branch. 
+If the submodule is required to be on the head (most recent commit) of the specified branch. Keep in mind that it is possible that this will pass on a PR at the time it is run but no longer be on the most recent at the time of merge. 
 
 This is optional, it will not be checked if not included. Including this, but not branch, will result in an error. 
 
