@@ -108,7 +108,7 @@ if [[ ! -z "${INPUT_REQUIRE_HEAD}" ]]; then
 	if [ "${HEAD_SHA}" == "${SUBMODULE_HASH}" ]; then
 		pass "${INPUT_PATH} is the the most recent ${INPUT_BRANCH}"
 	else
-		fail "Submodule ${INPUT_PATH} is not on most recent ${INPUT_BRANCH}($HEAD_SHA)"
+		fail "Submodule ${INPUT_PATH} is not on most recent ${INPUT_BRANCH} ($HEAD_SHA)"
 	fi
 fi
 
