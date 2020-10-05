@@ -49,7 +49,6 @@ if [[ "${isPR}" = true ]]; then
 fi
 
 ## Check for submodule valid
-echo "Submodule and Tree Info"
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule"
 
