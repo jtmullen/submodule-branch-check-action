@@ -99,7 +99,7 @@ fi
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 
 ## Check if most recent required
-if [[ ! -z "${INPUT_REQUIRE_HEAD" ]]; then
+if [[ ! -z "${INPUT_REQUIRE_HEAD}" ]]; then
 	echo "Check if on most recent"
 	if [[ -z "${INPUT_BRANCH}" ]]; then
 		error "Error: Branch not provided but Head Commit is required"
