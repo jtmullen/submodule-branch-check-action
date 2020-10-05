@@ -101,6 +101,9 @@ cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to
 ## Check if most recent required
 if [[ ! -z "${INPUT_REQUIRE_HEAD" ]]; then
 	echo "Check if on most recent"
+	if [[ -z "${INPUT_BRANCH}" ]]; then
+		error "Error: Branch not provided but Head Commit is required"
+	fi
 	HEAD_SHA=`git rev-parse origin/${INPUT_BRANCH}`
 	if [ "${HEAD_SHA}" == "${SUBMODULE_HASH}" ]; then
 		pass "${INPUT_PATH} is the the most recent ${INPUT_BRANCH}"
