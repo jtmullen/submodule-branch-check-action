@@ -7,8 +7,6 @@ error () {
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
-
-
 isPR=false
 if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
