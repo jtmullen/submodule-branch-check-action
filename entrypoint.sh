@@ -10,11 +10,11 @@ REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 isPR=false
 if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
-	TO_HASH=`jq -r ".pull_request.head.sha" "${GITHUB_EVENT_PATH}"`
-	FROM_HASH=`jq -r ".pull_request.base.sha" "${GITHUB_EVENT_PATH}"`
 	PR_BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
 	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
 	USER=`jq -r ".pull_request.user.login" "${GITHUB_EVENT_PATH}"`
+	TO_HASH=`git rev-parse origin/${PR_BRANCH}`
+	FROM_HASH=`git rev-parse origin/${BASE_BRANCH}`
 	echo "Run for PR # ${PR} of ${PR_BRANCH} into ${BASE_BRANCH} on ${REPO} by ${USER}"
 	echo "Hash ${TO_HASH} into ${FROM_HASH}"
 	isPR=true
@@ -86,7 +86,7 @@ cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change direct
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	if [[ "${isPR}" = true ]]; then 
 		echo "Check if submodule has been changed on ${PR_BRANCH}"
-		CHANGED=`git diff --name-only origin/${FROM_HASH}...origin/${TO_HASH}`
+		CHANGED=`git diff --name-only ${FROM_HASH}...${TO_HASH}`
 		if ! grep "^${INPUT_PATH}$" <<< "${CHANGED}"; then
 			pass "Submodule ${INPUT_PATH} has not been changed on branch ${PR_BRANCH}"
 		fi
