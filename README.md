@@ -54,7 +54,7 @@ jobs:
               token: ${{ secrets.PAT_for_Private_Submodule }}
               fetch-depth: 0
     - name: Check Submodule Name
-      uses: jtmullen/submodule-branch-check-action@v0.6.0-beta
+      uses: jtmullen/submodule-branch-check-action@v0-beta
       with:
         path: "path/to/submodule"
         branch: "master"
