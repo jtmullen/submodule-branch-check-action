@@ -90,7 +90,7 @@ fail () {
 }
 
 pass () {
-	echo "PASS: $1"
+	echo -e "\032[0;31mPASS: $1\033[0m"
 	echo "::set-output name=fails::"
 	exit 0	
 }
