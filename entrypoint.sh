@@ -5,6 +5,14 @@ error () {
 	exit 1
 }
 
+newSubmodule=false
+
+newSubmoduleWarning() {
+	newSubmodule=true
+	echo "::warning::Submodule $1 does not exist on the base branch $2"
+	echo "Cannot do progression check for new submodules"
+}
+
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
 isPR=false
@@ -63,12 +71,19 @@ SUBMODULE_HASH=`git rev-parse HEAD`
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
 git checkout "${FROM_HASH}"  || error "__Line:${LINENO}__Error: Could not checkout ${FROM_HASH}"
 
-git submodule update "${INPUT_PATH}"  || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${BASE_BRANCH} (is it pushed to remote?)"
+newSubmodule=false
+## Check that submodule is on base branch
+BASESUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
+echo "${BASESUBMODULES}" | grep ".${INPUT_PATH}." || newSubmoduleWarning "${INPUT_PATH}" "${BASE_BRANCH}"
 
-cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
-SUBMODULE_HASH_BASE=`git rev-parse HEAD`
+if [ "$newSubmodule" = false ] ; then
+	git submodule update "${INPUT_PATH}"  || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${BASE_BRANCH} (is it pushed to remote?)"
 
-echo "Submodule ${INPUT_PATH} Changed from: ${SUBMODULE_HASH_BASE} to ${SUBMODULE_HASH}"
+	cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
+	SUBMODULE_HASH_BASE=`git rev-parse HEAD`
+
+	echo "Submodule ${INPUT_PATH} Changed from: ${SUBMODULE_HASH_BASE} to ${SUBMODULE_HASH}"
+fi
 
 fail () {
 	echo "::error file=${INPUT_PATH}::$1"
@@ -129,7 +144,7 @@ if [ "${SUBMODULE_HASH_BASE}" == "${SUBMODULE_HASH}" ]; then
 fi
 
 ## Check that base hash is an ancestor of the ref hash
-echo "Check if old submodule has is parent of current"
+echo "Verify old submodule hash is ancestor of current"
 git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${BASE_BRANCH} is not an ancestor of that on ${PR_BRANCH}"
 
 pass "Valid submodule ${INPUT_PATH} on ${PR_BRANCH}"
