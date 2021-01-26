@@ -9,8 +9,7 @@ newSubmodule=false
 
 newSubmoduleWarning() {
 	newSubmodule=true
-	echo "::warning::Submodule $1 does not exist on the base branch $2"
-	echo "Cannot do progression check for new submodules"
+	echo "::warning::Submodule $1 does not exist on the base branch $2 \n Cannot do progression check for new submodules on this run"
 }
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
