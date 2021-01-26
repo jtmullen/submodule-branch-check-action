@@ -9,7 +9,7 @@ newSubmodule=false
 
 newSubmoduleWarning() {
 	newSubmodule=true
-	echo "::warning::Submodule $1 does not exist on the base branch $2;  Cannot do progression check for new submodules"
+	echo "::warning::Submodule $1 does not exist on the base branch/commit;  Cannot do progression check for new submodules"
 }
 
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
@@ -63,7 +63,6 @@ git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout 
 git submodule init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could initialize submodule"
 git submodule update "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 
-echo "Switch to submodule at: ${INPUT_PATH}"
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
@@ -72,7 +71,7 @@ git checkout "${FROM_HASH}"  || error "__Line:${LINENO}__Error: Could not checko
 
 ## Check if submodule is new between commits/branches
 BASESUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-echo "${BASESUBMODULES}" | grep ".${INPUT_PATH}." || newSubmoduleWarning "${INPUT_PATH}" "${BASE_BRANCH}"
+echo "${BASESUBMODULES}" | grep ".${INPUT_PATH}." || newSubmoduleWarning "${INPUT_PATH}"
 
 ## Only get submodule on base if it exists
 if [ "$newSubmodule" = false ]; then
@@ -136,14 +135,15 @@ if [[ ! -z "${INPUT_BRANCH}" ]]; then
 	echo "Submodule is on branch ${INPUT_BRANCH}"
 fi
 
-## If they are the same pass
-echo "Check if submodule is identical hash"
-if [ "${SUBMODULE_HASH_BASE}" == "${SUBMODULE_HASH}" ]; then
-    pass "${INPUT_PATH} is the same as ${BASE_BRANCH}"
-fi
 
 ##only check for progression if we have something to compare against
 if [ "$newSubmodule" = false ]; then
+	## If they are the same pass
+	echo "Check if submodule is identical hash"
+	if [ "${SUBMODULE_HASH_BASE}" == "${SUBMODULE_HASH}" ]; then
+		pass "${INPUT_PATH} is the same as ${BASE_BRANCH}"
+	fi
+
 	## Check that base hash is an ancestor of the ref hash
 	echo "Verify old submodule hash is ancestor of current"
 	git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${BASE_BRANCH} is not an ancestor of that on ${PR_BRANCH}"

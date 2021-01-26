@@ -48,11 +48,11 @@ jobs:
       uses: actions/checkout@v2
     - name: Checkout submodule repo
       uses: actions/checkout@v2
-          with:
-              repository: UserOrOrganization/Repo
-              path: "path/to/repo"
-              token: ${{ secrets.PAT_for_Private_Submodule }}
-              fetch-depth: 0
+      with:
+        repository: UserOrOrganization/Repo
+        path: "path/to/repo"
+        token: ${{ secrets.PAT_for_Private_Submodule }}
+        fetch-depth: 0
     - name: Check Submodule Name
       uses: jtmullen/submodule-branch-check-action@v0-beta
       with:
