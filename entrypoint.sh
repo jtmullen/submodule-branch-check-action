@@ -1,6 +1,7 @@
 #!/bin/bash
 
 error () {
+echo "::set-output name=fails::error"
 	echo "::error::$1"
 	exit 1
 }
@@ -12,14 +13,22 @@ newSubmoduleWarning() {
 	echo "::warning::Submodule $1 does not exist on the base branch/commit;  Cannot do progression check for new submodules"
 }
 
-REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
+EVENT_PATH = GITHUB_EVENT_PATH
+
+## Check for test event path
+if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
+	EVENT_PATH = INPUT_EVENT_PATH
+	echo "Event Path Overwritten"
+fi
+
+REPO=`jq -r ".repository.full_name" "${EVENT_PATH}"`
 
 isPR=false
-if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; then
-	PR=`jq -r ".number" "${GITHUB_EVENT_PATH}"`
-	PR_BRANCH=`jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}"`
-	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${GITHUB_EVENT_PATH}"`
-	USER=`jq -r ".pull_request.user.login" "${GITHUB_EVENT_PATH}"`
+if [[ $(jq -r ".pull_request.head.ref" "${EVENT_PATH}") != "null" ]]; then
+	PR=`jq -r ".number" "${EVENT_PATH}"`
+	PR_BRANCH=`jq -r ".pull_request.head.ref" "${EVENT_PATH}"`
+	BASE_BRANCH=`jq -r ".pull_request.base.ref" "${EVENT_PATH}"`
+	USER=`jq -r ".pull_request.user.login" "${EVENT_PATH}"`
 	git fetch origin "${PR_BRANCH}" --recurse-submodules=no --depth 1 || error "__Line:${LINENO}__Error: Could not fetch tip of ${PR_BRANCH}"
 	git fetch origin "${BASE_BRANCH}" --recurse-submodules=no --depth 1 || error "__Line:${LINENO}__Error: Could not fetch tip of ${BASE_BRANCH}"
 	TO_HASH=`git rev-parse origin/${PR_BRANCH}`
@@ -27,16 +36,16 @@ if [[ $(jq -r ".pull_request.head.ref" "${GITHUB_EVENT_PATH}") != "null" ]]; the
 	echo "Run for PR # ${PR} of ${PR_BRANCH} into ${BASE_BRANCH} on ${REPO} by ${USER}"
 	echo "Hash ${TO_HASH} into ${FROM_HASH}"
 	isPR=true
-elif [[ $(jq -r ".after" "${GITHUB_EVENT_PATH}") != "null" ]]; then
-	TO_HASH=`jq -r ".after" "${GITHUB_EVENT_PATH}"`
-	FROM_HASH=`jq -r ".before" "${GITHUB_EVENT_PATH}"`
-	BRANCH_NAME=`jq -r ".ref" "${GITHUB_EVENT_PATH}"`
+elif [[ $(jq -r ".after" "${EVENT_PATH}") != "null" ]]; then
+	TO_HASH=`jq -r ".after" "${EVENT_PATH}"`
+	FROM_HASH=`jq -r ".before" "${EVENT_PATH}"`
+	BRANCH_NAME=`jq -r ".ref" "${EVENT_PATH}"`
 	BASE_BRANCH="${FROM_HASH}"
 	PR_BRANCH="${TO_HASH}"
-	USER=`jq -r ".pusher.name" "${GITHUB_EVENT_PATH}"`
+	USER=`jq -r ".pusher.name" "${EVENT_PATH}"`
 	echo "Run for push of ${BRANCH_NAME} from ${FROM_HASH} to ${TO_HASH} on ${REPO} by ${USER}"
 else
-	error "Unknown Github Event Path"
+	error "Unknown Github Event Payload"
 fi
 
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace"
