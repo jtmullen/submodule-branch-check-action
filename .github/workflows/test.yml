@@ -26,7 +26,7 @@ jobs:
       continue-on-error: true
       with:
         path: "submodule-action-test-submodule"
-        event_path: "action/test/bad_payload.json"
+        event_path: "test/bad_payload.json"
     - name: Verify Fail on unsupported Event Payload
       run: test "${{ steps.bad-payload.outputs.fails }}" = "error"   
     # If the Submodule is not checked out correctly we should fail
