@@ -19,8 +19,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: "action"
-    -name: Print Paths
-     run: find .
+    - name: Print Paths
+      run: find .
     # Fail on Unsupported Event Payload
     - name: Fail on unsupported Event Payload
       uses: ./action/
@@ -47,6 +47,8 @@ jobs:
         repository:  jtmullen/submodule-action-test-submodule
         path: "submodule-action-test-submodule"
         fetch-depth: 0
+    - name: Print Paths2
+      run: find .
     # New Submodules should pass without a progression check
     - name: Pass with New Submodule
       uses: ./action/
