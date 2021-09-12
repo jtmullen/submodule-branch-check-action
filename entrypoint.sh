@@ -22,6 +22,8 @@ if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
 	echo "Event Path Overwritten"
 fi
 
+cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace"
+
 REPO=`jq -r ".repository.full_name" "${EVENT_PATH}"`
 
 isPR=false
@@ -48,8 +50,6 @@ elif [[ $(jq -r ".after" "${EVENT_PATH}") != "null" ]]; then
 else
 	error "Unknown Github Event Payload"
 fi
-
-cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace"
 
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
