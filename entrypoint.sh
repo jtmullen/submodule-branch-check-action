@@ -13,11 +13,11 @@ newSubmoduleWarning() {
 	echo "::warning::Submodule $1 does not exist on the base branch/commit;  Cannot do progression check for new submodules"
 }
 
-EVENT_PATH = GITHUB_EVENT_PATH
+EVENT_PATH=GITHUB_EVENT_PATH
 
 ## Check for test event path
 if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
-	EVENT_PATH = INPUT_EVENT_PATH
+	EVENT_PATH=INPUT_EVENT_PATH
 	echo "Event Path Overwritten"
 fi
 
