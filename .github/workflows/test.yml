@@ -36,8 +36,6 @@ jobs:
         event_path: "action/test/bad_payload.json"
     - name: Verify Fail on unsupported Event Payload
       run: test "${{ steps.bad-payload.outputs.fails }}" = "error"   
-    - name: Print Paths2
-      run: find .
     # New Submodules should pass without a progression check
     - name: Pass with New Submodule
       uses: ./action/
@@ -58,7 +56,7 @@ jobs:
         event_path: "action/test/new_submodule_event_push.json"
         branch: "fake_branch"
     - name: Verify Fail New Submodule Wrong Branch
-      run: test "${{ steps.no-submodule.outputs.fails }}" = "Submodule submodule-action-test-submodule Hash 803027ba35806133a1a0ecdf8fe89b7e90d1692d is not on branch fake_branch"
+      run: test "${{ steps.new-submodule-wrong-branch.outputs.fails }}" = "Submodule submodule-action-test-submodule Hash 803027ba35806133a1a0ecdf8fe89b7e90d1692d is not on branch fake_branch"
     # Fail if submodule moves backwards      
     - name: Fail When Submodule Moves Backwards
       uses: ./action/
@@ -68,5 +66,5 @@ jobs:
         path: "submodule-action-test-submodule"
         event_path: "action/test/submodule_moved_backwards.json"
     - name: Verify Fail When Submodule Moves Backwards
-      run: test "${{ steps.no-submodule.outputs.fails }}" = "Submodule submodule-action-test-submodule on 66fe441ec6c2db7565686f303dde85d7eb8ad132 is not an ancestor of that on 1063abeafa3795cfb9f80b0b2241f961d5c8e948"
+      run: test "${{ steps.move-backwards.outputs.fails }}" = "Submodule submodule-action-test-submodule on 66fe441ec6c2db7565686f303dde85d7eb8ad132 is not an ancestor of that on 1063abeafa3795cfb9f80b0b2241f961d5c8e948"
     

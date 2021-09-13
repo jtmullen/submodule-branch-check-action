@@ -50,6 +50,8 @@ else
 	error "Unknown Github Event Payload"
 fi
 
+cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace"
+
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
 	echo "Fetch Branch Histories"
