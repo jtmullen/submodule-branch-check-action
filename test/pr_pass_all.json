@@ -4,15 +4,15 @@
     "pull_request": {
       "base": {
         "ref": "main",
-        "sha": "2300b189e09bc097d5c356a2a65ac2759a835aed",
+        "sha": "2300b189e09bc097d5c356a2a65ac2759a835aed"
       },
       "head": {
         "ref": "branch_no_change",
-        "sha": "dc374e23b64c6fd14611a73e6e22e8a582f087d7",
+        "sha": "dc374e23b64c6fd14611a73e6e22e8a582f087d7"
       },
       "number": 1,
       "user": {
-        "login": "jtmullen",
+        "login": "jtmullen"
       }
     },
 	"repository": {
