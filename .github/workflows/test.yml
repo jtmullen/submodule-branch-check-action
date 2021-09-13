@@ -88,7 +88,7 @@ jobs:
         require_head: true
         branch: "main"
     - name: Verify Fail When Newest Required
-      run: test "${{ steps.not-newest.outputs.fails }}" = "Submodule submodule-action-test-submodule is not on most recent main 803027ba35806133a1a0ecdf8fe89b7e90d1692d"
+      run: test "${{ steps.not-newest.outputs.fails }}" = "Submodule submodule-action-test-submodule is not on most recent main (803027ba35806133a1a0ecdf8fe89b7e90d1692d)"
     # Pass if unchanged on pull request
     - name: Pass When Unchanged PR
       uses: ./action/
