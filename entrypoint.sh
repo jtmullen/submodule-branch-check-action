@@ -14,6 +14,7 @@ newSubmoduleWarning() {
 }
 
 echo "Github path is:  ${GITHUB_EVENT_PATH}"
+echo "Input path is:  ${INPUT_EVENT_PATH}"
 EVENT_PATH=GITHUB_EVENT_PATH
 
 ## Check for test event path
