@@ -19,7 +19,7 @@ EVENT_PATH=GITHUB_EVENT_PATH
 
 ## Check for test event path
 if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
-	EVENT_PATH=INPUT_EVENT_PATH
+	EVENT_PATH="${INPUT_EVENT_PATH}"
 	echo "Event Path Overwritten"
 fi
 
