@@ -1,30 +1,36 @@
 #!/bin/bash
 
 error () {
-echo "::set-output name=fails::error"
+	echo "::set-output name=fails::error"
 	echo "::error::$1"
 	exit 1
 }
 
+# When a new submodule is added we have no way to check for progression. In this case we will skip that check (instead of failing it)
 newSubmodule=false
-
 newSubmoduleWarning() {
 	newSubmodule=true
 	echo "::warning::Submodule $1 does not exist on the base branch/commit;  Cannot do progression check for new submodules"
 }
 
+## Path to JSON Payload of the Github Event Info
 EVENT_PATH=GITHUB_EVENT_PATH
 
-## Check for test event path
+## Check for override of event path - used for tests
 if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
 	EVENT_PATH="${INPUT_EVENT_PATH}"
-	echo "Event Path Overwritten"
+	## Put warning here as this probably should not be used outside testing
+	echo "::warning::Event Path Overwritten. Only intended for testing use."
+	
 fi
+
+echo "::group::Setup"
 
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace"
 
 REPO=`jq -r ".repository.full_name" "${EVENT_PATH}"`
 
+## Get all the info about this push/pr we need to check the submodules
 isPR=false
 if [[ $(jq -r ".pull_request.head.ref" "${EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${EVENT_PATH}"`
@@ -47,11 +53,13 @@ elif [[ $(jq -r ".after" "${EVENT_PATH}") != "null" ]]; then
 	USER=`jq -r ".pusher.name" "${EVENT_PATH}"`
 	echo "Run for push of ${BRANCH_NAME} from ${FROM_HASH} to ${TO_HASH} on ${REPO} by ${USER}"
 else
+	## Doesn't appear to be a PR or a push
 	error "Unknown Github Event Payload"
 fi
 
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
+	echo "::group::Get PR Branches"
 	echo "Fetch Branch Histories"
 	if [[ ! -z "${INPUT_FETCH_DEPTH}" ]]; then
 		echo "Histories to depth: ${INPUT_FETCH_DEPTH}"
@@ -62,8 +70,12 @@ if [[ "${isPR}" = true ]]; then
 		git fetch origin --recurse-submodules=no "${PR_BRANCH}" || error "__Line:${LINENO}__Error: Could not fetch history of ${PR_BRANCH}"
 		git fetch origin --recurse-submodules=no "${BASE_BRANCH}" || error "__Line:${LINENO}__Error: Could not fetch history of ${BASE_BRANCH}"
 	fi
+	echo "::endgroup::"
 fi
 
+echo "::endgroup::"
+echo "::group::Get Submodule Info"
+## Move to end hash when setting up submodule, otherwise would fail if submodule does not exist on whetever was originally checked out
 git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout ${TO_HASH}"
 
 ## Check for submodule valid
@@ -107,8 +119,11 @@ pass () {
 
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
 
-## Pass if they are unchanged
+echo "::endgroup::"
+echo "::group::Checks"
+## Immediately pass if submodule is not changed (PR only)
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
+	echo "::group::Check if Unchanged"
 	if [[ "${isPR}" = true ]]; then 
 		echo "Check if submodule has been changed on ${PR_BRANCH}"
 		CHANGED=`git diff --name-only ${FROM_HASH}...${TO_HASH}`
@@ -119,12 +134,14 @@ if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	else
 		echo "Note: Not a PR - Pass if Unchanged ignored"
 	fi	
+	echo "::endgroup::"
 fi
 
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 
 ## Check if most recent required
 if [[ ! -z "${INPUT_REQUIRE_HEAD}" ]]; then
+	echo "::group::Check if Most Recent"
 	echo "Check if on most recent"
 	if [[ -z "${INPUT_BRANCH}" ]]; then
 		error "Error: Branch not provided but Head Commit is required"
@@ -135,19 +152,23 @@ if [[ ! -z "${INPUT_REQUIRE_HEAD}" ]]; then
 	else
 		fail "Submodule ${INPUT_PATH} is not on most recent ${INPUT_BRANCH} ($HEAD_SHA)"
 	fi
+	echo "::endgroup::"
 fi
 
 ## Check if on required branch
 if [[ ! -z "${INPUT_BRANCH}" ]]; then
+	echo "::group::Check Required Branch"
 	echo "Check for submodule on branch ${INPUT_BRANCH}"
 	BRANCHES=`git branch -r --contains ${SUBMODULE_HASH}`
 	echo "${BRANCHES}" | grep "/${INPUT_BRANCH}$" || fail "Submodule ${INPUT_PATH} Hash ${SUBMODULE_HASH} is not on branch ${INPUT_BRANCH}"
 	echo "Submodule is on branch ${INPUT_BRANCH}"
+	echo "::endgroup::"
 fi
 
 
 ##only check for progression if we have something to compare against
 if [ "$newSubmodule" = false ]; then
+	echo "::group::Check Progression"
 	## If they are the same pass
 	echo "Check if submodule is identical hash"
 	if [ "${SUBMODULE_HASH_BASE}" == "${SUBMODULE_HASH}" ]; then
@@ -157,6 +178,7 @@ if [ "$newSubmodule" = false ]; then
 	## Check that base hash is an ancestor of the ref hash
 	echo "Verify old submodule hash is ancestor of current"
 	git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${BASE_BRANCH} is not an ancestor of that on ${PR_BRANCH}"
+	echo "::endgroup::"
 fi
 
 pass "Valid submodule ${INPUT_PATH} on ${PR_BRANCH}"
