@@ -7,5 +7,5 @@
 	"ref": "refs/heads/main",
 	"repository": {
 	  "full_name": "jtmullen/submodule-action-test-parent",
-	},
+	}
 }
