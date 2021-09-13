@@ -15,6 +15,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository:  jtmullen/submodule-action-test-parent
+        fetch-depth: 0
     - name: Checkout Action
       uses: actions/checkout@v2
       with:
