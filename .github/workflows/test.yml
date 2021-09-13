@@ -20,8 +20,12 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: "action"
-    - name: Print Paths
-      run: find .
+    - name: Checkout Test Repo Submodule
+      uses: actions/checkout@v2
+      with:
+        repository:  jtmullen/submodule-action-test-submodule
+        path: "submodule-action-test-submodule"
+        fetch-depth: 0
     # Fail on Unsupported Event Payload
     - name: Fail on unsupported Event Payload
       uses: ./action/
@@ -32,22 +36,6 @@ jobs:
         event_path: "action/test/bad_payload.json"
     - name: Verify Fail on unsupported Event Payload
       run: test "${{ steps.bad-payload.outputs.fails }}" = "error"   
-    # If the Submodule is not checked out correctly we should fail
-    - name: Fail Without Submodule
-      uses: ./action/
-      id: no-submodule
-      continue-on-error: true
-      with:
-        path: "submodule-action-test-submodule"
-        event_path: "action/test/submodule_moved_backwards.json"
-    - name: Verify Fail Without Submodule
-      run: test "${{ steps.no-submodule.outputs.fails }}" = "error"     
-    - name: Checkout Test Repo Submodule
-      uses: actions/checkout@v2
-      with:
-        repository:  jtmullen/submodule-action-test-submodule
-        path: "submodule-action-test-submodule"
-        fetch-depth: 0
     - name: Print Paths2
       run: find .
     # New Submodules should pass without a progression check
