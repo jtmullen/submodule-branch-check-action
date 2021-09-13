@@ -68,6 +68,8 @@ fi
 
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
+ls
+echo "${SUBMODULES}"
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule"
 
 git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout ${TO_HASH}"
