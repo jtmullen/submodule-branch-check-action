@@ -3,14 +3,14 @@
     "number": 1,
     "pull_request": {
       "base": {
-        "ref": "main",
-        "sha": "2300b189e09bc097d5c356a2a65ac2759a835aed"
+        "ref": "branch_no_change",
+        "sha": "af8c312ead3616a4968066ad975b30f211f713cf"
       },
       "head": {
-        "ref": "branch_no_change",
-        "sha": "dc374e23b64c6fd14611a73e6e22e8a582f087d7"
+        "ref": "branch_to_latest",
+        "sha": "d0ca1190ef3a733e6e71bf3373fc525d79e47da1"
       },
-      "number": 1,
+      "number": 3,
       "user": {
         "login": "jtmullen"
       }
@@ -19,5 +19,4 @@
 	  "full_name": "jtmullen/submodule-action-test-parent"
 	}
 }
-
     
