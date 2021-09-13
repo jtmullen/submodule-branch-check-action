@@ -39,7 +39,7 @@ jobs:
       continue-on-error: true
       with:
         path: "submodule-action-test-submodule"
-        event_path: "action/test/new_submodule_event_push.json"
+        event_path: "action/test/submodule_moved_backwards.json"
     - name: Verify Fail Without Submodule
       run: test "${{ steps.no-submodule.outputs.fails }}" = "error"     
     - name: Checkout Test Repo Submodule
