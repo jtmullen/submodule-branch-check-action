@@ -120,7 +120,6 @@ pass () {
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
 
 echo "::endgroup::"
-echo "::group::Checks"
 ## Immediately pass if submodule is not changed (PR only)
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	echo "::group::Check if Unchanged"
