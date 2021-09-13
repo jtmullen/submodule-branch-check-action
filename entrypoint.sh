@@ -50,8 +50,6 @@ else
 	error "Unknown Github Event Payload"
 fi
 
-cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace"
-
 ## Fetch both branches for PR
 if [[ "${isPR}" = true ]]; then
 	echo "Fetch Branch Histories"
@@ -66,14 +64,12 @@ if [[ "${isPR}" = true ]]; then
 	fi
 fi
 
+git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout ${TO_HASH}"
+
 ## Check for submodule valid
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-git status
-ls -a
-git config --file .gitmodules --name-only --get-regexp path
-echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule"
+echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule on ${TO_HASH}"
 
-git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout ${TO_HASH}"
 git submodule init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could initialize submodule"
 git submodule update "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 
