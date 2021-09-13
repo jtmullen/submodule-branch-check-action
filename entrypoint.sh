@@ -12,6 +12,8 @@ newSubmoduleWarning() {
 	echo "::warning::Submodule $1 does not exist on the base branch/commit;  Cannot do progression check for new submodules"
 }
 
+echo "::warning::You are using a v0 beta version of this action. Update to v1 release is recommended."
+
 REPO=`jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}"`
 
 isPR=false
