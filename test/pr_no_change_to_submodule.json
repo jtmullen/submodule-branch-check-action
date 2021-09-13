@@ -1,10 +1,10 @@
 {
     "action": "opened",
-    "number": 1,
+    "number": 24,
     "pull_request": {
       "base": {
-        "ref": "main",
-        "sha": "2300b189e09bc097d5c356a2a65ac2759a835aed"
+        "ref": "pr_base_branch",
+        "sha": "1063abeafa3795cfb9f80b0b2241f961d5c8e948"
       },
       "head": {
         "ref": "branch_no_change",
