@@ -86,9 +86,9 @@ git submodule init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could init
 git submodule update "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
-if [[ ! -z "${INPUT_FETCH_DEPTH}" ]]; then
+if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
-	git fetch origin --depth "${INPUT_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Could not fetch history of submodule"
+	git fetch origin --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Could not fetch history of submodule"
 else
 	echo "Full Submodule History"
 	git fetch origin || error "__Line:${LINENO}__Error: Could not fetch history of submodule"
