@@ -29,7 +29,7 @@ jobs:
     # Pass on PR with all requirements met
     - name: Pass All PR
       uses: ./action/
-      id: pass-all
+      id: pass-all2
       with:
         path: "submodule-action-test-submodule"
         event_path: "action/test/pr_pass_all.json"
