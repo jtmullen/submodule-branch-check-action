@@ -35,7 +35,7 @@ jobs:
         event_path: "action/test/pr_pass_all.json"
         require_head: true
         branch: "main"
-        sub_fetch_depth: 1
+        sub_fetch_depth: "1"
     - name: Verify Pass All PR
       run: test -z "${{ steps.pass-all.outputs.fails }}"
     # Fail on Unsupported Event Payload
