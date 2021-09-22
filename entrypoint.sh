@@ -83,17 +83,17 @@ SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule on ${TO_HASH}"
 
 git submodule init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could initialize submodule"
-git submodule update "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 
-cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
+## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
-	git fetch origin --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Could not fetch history of submodule"
+	git submodule update "${INPUT_PATH}" --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 else
 	echo "Full Submodule History"
-	git fetch origin || error "__Line:${LINENO}__Error: Could not fetch history of submodule"
+	git submodule update "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 fi
 
+cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
