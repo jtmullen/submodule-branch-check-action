@@ -1,0 +1,14 @@
+# change this to the event type you want to get the data for
+name: Dump Event Path
+on: [push, pull_request]
+
+jobs:
+  printJob:    
+    name: Print event
+    runs-on: ubuntu-latest
+    steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
