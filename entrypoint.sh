@@ -20,8 +20,7 @@ EVENT_PATH=GITHUB_EVENT_PATH
 if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
 	EVENT_PATH="${INPUT_EVENT_PATH}"
 	## Put warning here as this probably should not be used outside testing
-	echo "::warning::Event Path Overwritten. Only intended for testing use."
-	
+	echo "::warning::Github Event Payload Path Overwritten. Only intended for testing use."
 fi
 
 echo "::group::Setup"
@@ -30,7 +29,7 @@ cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change direct
 
 REPO=`jq -r ".repository.full_name" "${EVENT_PATH}"`
 
-## Get all the info about this push/pr we need to check the submodules
+## Get all the info about this push or pr event we need to check the submodule
 isPR=false
 if [[ $(jq -r ".pull_request.head.ref" "${EVENT_PATH}") != "null" ]]; then
 	PR=`jq -r ".number" "${EVENT_PATH}"`
@@ -75,6 +74,8 @@ fi
 
 echo "::endgroup::"
 echo "::group::Get Submodule Info"
+
+
 ## Move to end hash when setting up submodule, otherwise would fail if submodule does not exist on whetever was originally checked out
 git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout ${TO_HASH}"
 
@@ -128,6 +129,7 @@ pass () {
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
 
 echo "::endgroup::"
+
 ## Immediately pass if submodule is not changed (PR only)
 if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 	echo "::group::Check if Unchanged"

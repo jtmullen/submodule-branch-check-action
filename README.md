@@ -3,37 +3,31 @@ A [github action](https://help.github.com/en/actions) to ensure that a submodule
 
 
 ## Inputs
-### `path`
+### `path` (required)
 The path to the submodule, this is required. Do not include leading or trailing slashes. 
 *Note: this must be the path the submodule is located at in the repo and the path to which you checkout the submodule in the workflow!*
 
-### `branch`
-The branch that the submodule version must be on. 
+### `branch` (optional)
+The name of a branch that the submodule hash must be on (after the push or on the head PR branch)
 
-This is optional, if not included the submodule will only be checked for progression, not commit presence on a specific branch. 
+### `pass_if_unchanged` (optional)
+For pull request only, if this is included the check will automatically pass if none of the commits modify the submodule. 
 
-### `pass_if_unchanged`
-If the check should automatically pass if the submodule was not changed on this branch. Only available on a PR, not a push. 
+### `fetch_depth` (optional)
+Fetch depth for the two relevant branches on a PR trigger. The action will checkout the two branches to this depth, if you know your branches are relatively short lived compared to the full history of your repo this can save you some processing time, network traffic, etc. by only checking out enough to cover your needs instead of the default full history.
 
-This is optional, if included an unchanged submodule results in automatic pass. Will be ignored if the trigger event is not a pull request. 
+### `sub_fetch_depth` (optional)
+Fetch depth for the submodule being checked. This will check out every branch to this depth. By default the full history will be checked out. I recommend leaving this at default unless your submodule is excessively large. Due to the nature of submodules there are many situations where, if the submodule is in a weird state, you will not get descriptive errors without a full fetch. 
 
-### `fetch_depth`
-Fetch depth for the two relevant branches on a PR trigger. The action will checkout the two branches to this depth, if you know your branches are relatively short lived compared to the full history of your repo this can save you some processing time, network traffic, etc. by only checking out enough to cover your needs. 
-
-This is optional, if not included it will default to full history for the branches.
-
-### `require_head`
-If the submodule is required to be on the head (most recent commit) of the specified branch. Keep in mind that it is possible that this will pass on a PR at the time it is run but no longer be on the most recent at the time of merge. 
-
-This is optional, it will not be checked if not included. Including this, but not branch, will result in an error. 
+### `require_head` (optional)
+If the submodule is required to be on the head (most recent commit) of the specified branch. Keep in mind that it is possible that this will pass on a PR at the time it is run but no longer be on the most recent at the time of merge. If specified, branch must also be specified - otherwise the run will result in an error.
 
 ## Outputs
 ### `fails`
-The reason the action failed (if any). The check will stop at the first failure. 
+The reason the action failed (if any). The check will stop at the first failure. In case of an error, fails will equal "error"
 
 ## Usage
-To add to a repo create a workflow file (such as `.github/workflows/check-submodules.yml`) with the following content adjusted for your needs:
-
+To add to a repo create a workflow file (such as `.github/workflows/check-submodules.yml`) with the following content adjusted for your needs. Note that the step to checkout the submodule is only required for private submodules. 
 ```yml
 name: check-submodule
 
@@ -46,31 +40,32 @@ jobs:
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v2
+	# Step only reqired for private submodules
     - name: Checkout submodule repo
       uses: actions/checkout@v2
       with:
-        repository: UserOrOrganization/Repo
+        repository: UserOrg/RepoName
         path: "path/to/repo"
         token: ${{ secrets.PAT_for_Private_Submodule }}
-        fetch-depth: 0
     - name: Check Submodule Name
-      uses: jtmullen/submodule-branch-check-action@v0-beta
+      uses: jtmullen/submodule-branch-check-action@v1
       with:
         path: "path/to/submodule"
-        branch: "master"
+        branch: "main"
         fetch_depth: "50"
         pass_if_unchanged: true
         require_head: true
 ```
 
 ### Usage Notes
-To ensure this action runs correctly you must checkout both the current repo and the submodule repo as expected with the appropriate amount of information about the repo history included. As shown above, the [Github Checkout Action](https://github.com/actions/checkout/) is a good way to set this up. Below are the main requirements for doing so:
+To ensure this action runs correctly you must checkout the current repo. If the submodule is private, you must also check out the submodule repo, in the correct location. As shown above, the [Github Checkout Action](https://github.com/actions/checkout/) is a good way to set this up. Below are the main requirements for doing so:
 
-**Fetch Depth:** This action handles the fetching (not cloning!) for the repo it is run on (checkout action does not have multibranch depth option at this time). On the submodule this will vary based on your workflow. You will need enough history for this action to determine the relationship between the submodule versions on the version being compared. If you are always working with very recent versions of the submodule this may be a small number, otherwise it could be much larger. 
+**Fetch Depth:** This action handles the fetch depth for both the parent repo and submodule. If you are restricting the fetch depth in this action be sure to pay attention to the default in your checkout method - you may need to restrict it there as well. 
 
-**Token:** If your submodule is private, provide a personal access token repo level access for the submodule so it can be checked out. If not using actions/Checkout ensure your method also persists the token so this action can access the remote repo.  
+**Token:** If your submodule is private, provide a personal access token with repo level access for the submodule so it can be checked out. If not using actions/Checkout ensure your method also persists the token so this action can access the remote repo.  
 
-**Path:** Leave the repo the action is run on at the default location, checkout the submodule into its appropriate location in the repo. 
+**Path:** Leave the repo the action is run on at the default location, checkout the submodule into its appropriate location within the repo. 
+
 
 You can also see [where this is used](https://github.com/search?l=YAML&q=submodule-branch-check-action&type=Code)
 
