@@ -28,8 +28,6 @@ jobs:
       with:
         path: "submodule-action-test-submodule"
         event_path: "action/test/pr_pass_all.json"
-        require_head: true
-        branch: "main"
         sub_fetch_depth: "1"
     - name: Verify Fail on Submodule Fetch Depth Small
       run: test "${{ steps.sub-fetch-depth.outputs.fails }}" = "error" 

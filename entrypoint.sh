@@ -83,15 +83,13 @@ git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout 
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule on ${TO_HASH}"
 
-git submodule init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could initialize submodule"
-
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
-	git submodule update "${INPUT_PATH}" --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
+	git submodule update --init --depth "${INPUT_SUB_FETCH_DEPTH}" "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 else
 	echo "Full Submodule History"
-	git submodule update "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
+	git submodule update --init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 fi
 
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
@@ -106,7 +104,7 @@ echo "${BASESUBMODULES}" | grep ".${INPUT_PATH}." || newSubmoduleWarning "${INPU
 
 ## Only get submodule on base if it exists
 if [ "$newSubmodule" = false ]; then
-	git submodule update "${INPUT_PATH}"  || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${BASE_BRANCH} (is it pushed to remote?)"
+	git submodule update -N "${INPUT_PATH}"  || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${BASE_BRANCH} (is it pushed to remote?)"
 
 	cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 	SUBMODULE_HASH_BASE=`git rev-parse HEAD`
