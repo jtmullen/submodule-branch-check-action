@@ -1,0 +1,11 @@
+{
+	"after": "7c0243f036a44489eddc0ac98fee2d11cbecc4b2",
+	"before": "3da1cd0f9ed5b5e60e4f3e58672308dfe657cb8c",
+	"pusher": {
+	  "name": "jtmullen"
+	},
+	"ref": "refs/heads/main",
+	"repository": {
+	  "full_name": "jtmullen/submodule-action-test-parent"
+	}
+}

@@ -20,8 +20,16 @@ inputs:
     description: "The fetch depth for both involved branches if run on a PR"
     required: false
     default: ''
+  sub_fetch_depth:
+    description: "The fetch depth for the submodule"
+    required: false
+    default: ''  
   require_head:
     description: "If the submodule should be required to be on the head commit of the specified branch"
+    required: false
+    default: ''
+  event_path:
+    description: "Override the path to the github event json file. Used for testing."
     required: false
     default: ''
 outputs:

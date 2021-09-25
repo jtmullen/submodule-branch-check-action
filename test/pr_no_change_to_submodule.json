@@ -1,0 +1,23 @@
+{
+    "action": "opened",
+    "number": 24,
+    "pull_request": {
+      "base": {
+        "ref": "pr_base_branch",
+        "sha": "1063abeafa3795cfb9f80b0b2241f961d5c8e948"
+      },
+      "head": {
+        "ref": "branch_no_change",
+        "sha": "66eee7a4eac382b60c349199af5459edda9b57e2"
+      },
+      "number": 24,
+      "user": {
+        "login": "jtmullen"
+      }
+    },
+	"repository": {
+	  "full_name": "jtmullen/submodule-action-test-parent"
+	}
+}
+
+    

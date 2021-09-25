@@ -1,0 +1,122 @@
+name: Submodule Action Unit Tests
+on: [push, pull_request]
+
+# To test this action we rely on an external repo with commits that have all the scenarios. 
+# That repo is: https://github.com/jtmullen/submodule-action-test-parent
+# These tests do not cover all errors (i.e. some command went wrong)
+# The tests do cover all failures (i.e. the submodule state doesn't meet the requirement)
+
+jobs:
+   run_tests:
+    runs-on: ubuntu-latest
+    name: Run All Tests
+    steps:
+    - name: Checkout Test Repo
+      uses: actions/checkout@v2
+      with:
+        repository:  jtmullen/submodule-action-test-parent
+        fetch-depth: 0
+    - name: Checkout Action
+      uses: actions/checkout@v2
+      with:
+        path: "action"
+    # Fail When Fetch Depth for Submodule too small
+    - name: Fail on Submodule Fetch Depth Small
+      uses: ./action/
+      id: sub-fetch-depth
+      continue-on-error: true
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/pr_pass_all.json"
+        require_head: true
+        branch: "main"
+        sub_fetch_depth: "1"
+    - name: Verify Fail on Submodule Fetch Depth Small
+      run: test "${{ steps.sub-fetch-depth.outputs.fails }}" = "error" 
+    # Fail on Unsupported Event Payload
+    - name: Fail on unsupported Event Payload
+      uses: ./action/
+      id: bad-payload
+      continue-on-error: true
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/bad_payload.json"
+    - name: Verify Fail on unsupported Event Payload
+      run: test "${{ steps.bad-payload.outputs.fails }}" = "error"   
+    # New Submodules should pass without a progression check
+    - name: Pass with New Submodule
+      uses: ./action/
+      id: new-submodule
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/new_submodule_event_push.json"
+        branch: "main"
+    - name: Verify Pass with New Submodule
+      run: test -z "${{ steps.new-submodule.outputs.fails }}"
+    # New submodule can fail if on wrong branch
+    - name: Fail New Submodule Wrong Branch
+      uses: ./action/
+      id: new-submodule-wrong-branch
+      continue-on-error: true
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/new_submodule_event_push.json"
+        branch: "fake_branch"
+    - name: Verify Fail New Submodule Wrong Branch
+      run: test "${{ steps.new-submodule-wrong-branch.outputs.fails }}" = "Submodule submodule-action-test-submodule Hash 803027ba35806133a1a0ecdf8fe89b7e90d1692d is not on branch fake_branch"
+    # Fail if submodule moves backwards      
+    - name: Fail When Submodule Moves Backwards
+      uses: ./action/
+      id: move-backwards
+      continue-on-error: true
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/submodule_moved_backwards.json"
+    - name: Verify Fail When Submodule Moves Backwards
+      run: test "${{ steps.move-backwards.outputs.fails }}" = "Submodule submodule-action-test-submodule on 66fe441ec6c2db7565686f303dde85d7eb8ad132 is not an ancestor of that on 1063abeafa3795cfb9f80b0b2241f961d5c8e948"
+    # Error if submodule hash is invalid (such as not pushed)
+    - name: Fail For Hash Not on Remote
+      uses: ./action/
+      id: not-on-remote
+      continue-on-error: true
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/submodule_hash_not_on_remote.json"
+    - name: Verify Fail For Hash Not on Remote
+      run: test "${{ steps.not-on-remote.outputs.fails }}" = "error"   
+    # Fail when newest required and not newest
+    - name: Fail When Newest Required
+      uses: ./action/
+      id: not-newest
+      continue-on-error: true
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/pr_no_change_to_submodule.json"
+        require_head: true
+        branch: "main"
+    - name: Verify Fail When Newest Required
+      run: test "${{ steps.not-newest.outputs.fails }}" = "Submodule submodule-action-test-submodule is not on most recent main (803027ba35806133a1a0ecdf8fe89b7e90d1692d)"
+    # Pass if unchanged on pull request
+    - name: Pass When Unchanged PR
+      uses: ./action/
+      id: pass-unchanged
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/pr_no_change_to_submodule.json"
+        require_head: true
+        branch: "main"
+        pass_if_unchanged: true
+    - name: Verify Pass When Unchanged PR
+      run: test -z "${{ steps.pass-unchanged.outputs.fails }}"
+    # Pass on PR with all requirements met
+    - name: Pass All PR
+      uses: ./action/
+      id: pass-all
+      with:
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/pr_pass_all.json"
+        require_head: true
+        branch: "main"
+    - name: Verify Pass All PR
+      run: test -z "${{ steps.pass-all.outputs.fails }}"
+    
