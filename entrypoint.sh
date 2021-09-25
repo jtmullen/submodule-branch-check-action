@@ -14,7 +14,7 @@ newSubmoduleWarning() {
 }
 
 ## Path to JSON Payload of the Github Event Info
-EVENT_PATH=GITHUB_EVENT_PATH
+EVENT_PATH="${GITHUB_EVENT_PATH}"
 
 ## Check for override of event path - used for tests
 if [[ ! -z "${INPUT_EVENT_PATH}" ]]; then
