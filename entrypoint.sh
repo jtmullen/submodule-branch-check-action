@@ -86,7 +86,7 @@ echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PA
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
-	git submodule update --init --depth "${INPUT_SUB_FETCH_DEPTH}" "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
+	git submodule update --init --no-single-branch --depth "${INPUT_SUB_FETCH_DEPTH}" "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
 else
 	echo "Full Submodule History"
 	git submodule update --init "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${PR_BRANCH} (is it pushed to remote?)"
