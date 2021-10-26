@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 error () {
 	echo "::set-output name=fails::error"
 	echo "::error::$1"
