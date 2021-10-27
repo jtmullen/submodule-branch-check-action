@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 error () {
 	echo "::set-output name=fails::error"
 	echo "::error::$1"
@@ -85,12 +83,13 @@ git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout 
 SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
 echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule on ${TO_HASH}"
 
-git --version
-
 ## Initialize Submodule
-git submodule update -v --init --depth=1 --no-single-branch "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not initialize submodule ${INPUT_PATH} as referenced by ${PR_BRANCH} (is the referenced commit pushed to remote?)"
+git submodule update --init --depth=1 "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not initialize submodule ${INPUT_PATH} as referenced by ${PR_BRANCH} (is the referenced commit pushed to remote?)"
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
+
+## Need to get all remote branches, we don't know what we don't know about the submodule
+git remote set-branches origin '*' || error "__Line:${LINENO}__Error: Could not set branches"
 
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
@@ -98,7 +97,7 @@ if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	git fetch origin --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 else 
 	echo "Full Submodule History"
-	git fetch origin --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	git fetch origin --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 fi
 
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
