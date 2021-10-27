@@ -97,7 +97,11 @@ if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	git fetch origin --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 else 
 	echo "Full Submodule History"
-	git fetch origin --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	if [[ "$(git rev-parse --is-shallow-repository)" = true ]]; then
+		git fetch origin --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	else
+		git fetch origin --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	fi
 fi
 
 cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change directory to Github Workspace" 
