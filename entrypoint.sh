@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x 
+
 error () {
 	echo "::set-output name=fails::error"
 	echo "::error::$1"
@@ -101,9 +103,9 @@ if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 else 
 	echo "Full Submodule History"
 	if [[ "$(git rev-parse --is-shallow-repository)" = true ]]; then
-		git fetch origin --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
-	else
 		git fetch origin --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	else
+		git fetch origin --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	fi
 fi
 echo "LIST2"
