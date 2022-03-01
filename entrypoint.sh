@@ -92,6 +92,7 @@ git rev-list "${SUBMODULE_HASH}"
 
 ## Need to get all remote branches, we don't know what we don't know about the submodule
 git remote set-branches origin '*' || error "__Line:${LINENO}__Error: Could not set branches"
+git checkout "${SUBMODULE_HASH}" || error "__Line:${LINENO}__Error: Cannot checkout submodule hash"
 
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
