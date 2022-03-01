@@ -109,6 +109,7 @@ else
 		git fetch --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	fi
 fi
+git branch -a
 echo "LIST2"
 git rev-list "${SUBMODULE_HASH}" 
 
