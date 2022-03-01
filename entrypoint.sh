@@ -88,9 +88,6 @@ git submodule update --init --depth=1 "${INPUT_PATH}" || error "__Line:${LINENO}
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 SUBMODULE_HASH=`git rev-parse HEAD`
 
-## Need to get all remote branches, we don't know what we don't know about the submodule
-git remote set-branches origin '*' || error "__Line:${LINENO}__Error: Could not set branches"
-
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
