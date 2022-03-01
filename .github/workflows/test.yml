@@ -113,7 +113,6 @@ jobs:
       with:
         path: "submodule-action-test-submodule"
         event_path: "action/test/pr_pass_all.json"
-        require_head: true
         branch: "main"
     - name: Verify Pass All PR
       run: test -z "${{ steps.pass-all.outputs.fails }}"
