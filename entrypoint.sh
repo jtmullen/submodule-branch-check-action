@@ -95,9 +95,9 @@ if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 else 
 	echo "Full Submodule History"
 	if [[ "$(git rev-parse --is-shallow-repository)" = true ]]; then
-		git fetch --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
-	else
 		git fetch --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	else
+		git fetch --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	fi
 fi
 
