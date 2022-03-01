@@ -100,13 +100,13 @@ git branch -a
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
-	git fetch --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	git pull --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 else 
 	echo "Full Submodule History"
 	if [[ "$(git rev-parse --is-shallow-repository)" = true ]]; then
-		git fetch --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+		git pull --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	else
-		git fetch --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+		git pull --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	fi
 fi
 git branch -a
