@@ -204,7 +204,7 @@ if [ "$newSubmodule" = false ]; then
 	echo "${SUBMODULE_HASH_BASE}"
 	git rev-list "${SUBMODULE_HASH}" 
 	git log --pretty --oneline
-	git rev-list "origin/${SUBMODULE_HASH}" 
+	git rev-list "${SUBMODULE_HASH}" 
 	git rev-list "${SUBMODULE_HASH}" | grep "${SUBMODULE_HASH_BASE}" || fail "Submodule ${INPUT_PATH} on ${BASE_BRANCH} is not an ancestor of that on ${PR_BRANCH}"
 	echo "::endgroup::"
 fi
