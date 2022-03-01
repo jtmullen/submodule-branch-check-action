@@ -158,6 +158,9 @@ if [[ ! -z "${INPUT_PASS_IF_UNCHANGED}" ]]; then
 fi
 
 cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
+git checkout "${SUBMODULE_HASH}" || error "__Line:${LINENO}__Error: Cannot checkout submodule hash"
+echo "status"
+git status
 
 ## Check if most recent required
 if [[ ! -z "${INPUT_REQUIRE_HEAD}" ]]; then
