@@ -91,13 +91,13 @@ SUBMODULE_HASH=`git rev-parse HEAD`
 ## Update Submodule 
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
-	git fetch origin --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+	git fetch --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 else 
 	echo "Full Submodule History"
 	if [[ "$(git rev-parse --is-shallow-repository)" = true ]]; then
-		git fetch origin --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+		git fetch --recurse-submodules=no || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	else
-		git fetch origin --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
+		git fetch --recurse-submodules=no --unshallow || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
 	fi
 fi
 
