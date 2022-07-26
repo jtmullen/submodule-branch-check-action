@@ -176,6 +176,14 @@ if [[ ! -z "${INPUT_BRANCH}" ]]; then
 	echo "${BRANCHES}" | grep "/${INPUT_BRANCH}$" || fail "Submodule ${INPUT_PATH} Hash ${SUBMODULE_HASH} is not on branch ${INPUT_BRANCH}"
 	echo "Submodule is on branch ${INPUT_BRANCH}"
 	echo "::endgroup::"
+
+	if [[ ! -z "${INPUT_FIRST_PARENT}" ]]; then
+		echo "::group::Check First-Parent Ancestry"
+		git rev-list --first-parent ${INPUT_BRANCH} --not ${SUBMODULE_HASH}^@ | grep "${SUBMODULE_HASH}" || fail "Commit ${SUBMODULE_HASH} is not a first-parent ancestor of the tip of ${INPUT_BRANCH}"
+		echo "Commit ${SUBMODULE_HASH} is a first-parent ancestor of the tip of ${INPUT_BRANCH}"
+		echo "::endgroup::"
+	fi
+
 fi
 
 

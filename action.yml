@@ -12,6 +12,10 @@ inputs:
     description: "Which branch the submodule must be on"
     required: false
     default: ''
+  first_parent:
+    description: "Require submodule commit to be an ancestor of specified branch strictly along first-parent path"
+    required: false
+    default: ''
   pass_if_unchanged:
     description: "If the check should always pass if the submodule hasn't been changed on a branch/commit"
     required: false
@@ -32,6 +36,7 @@ inputs:
     description: "Override the path to the github event json file. Used for testing."
     required: false
     default: ''
+  
 outputs:
   fails:
     description: "Cause of failure, if run failed"

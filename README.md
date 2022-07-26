@@ -10,6 +10,9 @@ The path to the submodule, this is required. Do not include leading or trailing 
 ### `branch` (optional)
 The name of a branch that the submodule hash must be on (after the push or on the head PR branch)
 
+### `first_parent` (optional)
+Require the submodule's checked-out commit to be an ancestor of the specified branch strictly along the path following first parents only.  That is, the submodule's current HEAD must either currently be or have at some point in the past been the tip of the branch specified.
+
 ### `pass_if_unchanged` (optional)
 For pull request only, if this is included the check will automatically pass if none of the commits modify the submodule. 
 
@@ -52,6 +55,7 @@ jobs:
       with:
         path: "path/to/submodule"
         branch: "main"
+        first_parent: true
         fetch_depth: "50"
         pass_if_unchanged: true
         require_head: true
