@@ -3,10 +3,11 @@
 startrev=`git rev-parse HEAD`
 
 restoreState () {
-	echo "Restoring Repo State"
+	echo "::group::Restoring Repo State"
 	cd "${GITHUB_WORKSPACE}"
 	git checkout $startrev
 	git submodule update
+	echo "::endgroup::"
 }
 
 error () {
