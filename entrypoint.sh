@@ -4,6 +4,7 @@ startrev=`git rev-parse HEAD`
 
 restoreState () {
 	echo "Restoring Repo State"
+	cd "${GITHUB_WORKSPACE}"
 	git checkout $startrev
 	git submodule update
 }
