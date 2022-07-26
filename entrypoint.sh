@@ -1,8 +1,17 @@
 #!/bin/bash
 
+startrev=`git rev-parse HEAD`
+
+restoreState () {
+	echo "Restoring Repo State"
+	git checkout $startrev
+	git submodule update
+}
+
 error () {
 	echo "::set-output name=fails::error"
 	echo "::error::$1"
+	restoreState
 	exit 1
 }
 
@@ -110,7 +119,7 @@ echo "${BASESUBMODULES}" | grep ".${INPUT_PATH}." || newSubmoduleWarning "${INPU
 
 ## Only get submodule on base if it exists
 if [ "$newSubmodule" = false ]; then
-	git submodule update -N "${INPUT_PATH}"  || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${BASE_BRANCH} (is it pushed to remote?)"
+	git submodule update -N "${INPUT_PATH}"  || error "__Line:${LINENO}__Error: Could not checkout submodule hash referenced by ${BASE_BRANCH}. It may not be pushed to remote or deeper than workflow shallow clone"
 
 	cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to the submodule"
 	SUBMODULE_HASH_BASE=`git rev-parse HEAD`
@@ -121,12 +130,14 @@ fi
 fail () {
 	echo "::error file=${INPUT_PATH}::$1"
 	echo "::set-output name=fails::$1"
+	restoreState
 	exit 1
 }
 
 pass () {
 	echo -e "\033[0;32mPASS: $1\033[0m"
 	echo "::set-output name=fails::"
+	restoreState
 	exit 0	
 }
 
