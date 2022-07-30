@@ -91,8 +91,8 @@ echo "::group::Get Submodule Info"
 git checkout "${TO_HASH}" || error "__Line:${LINENO}__Error: Could not checkout ${TO_HASH}"
 
 ## Check for submodule valid
-SUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-echo "${SUBMODULES}" | grep ".${INPUT_PATH}." || error "Error: path \"${INPUT_PATH}\" is not a submodule on ${TO_HASH}"
+SUBMODULES=`git config --file .gitmodules --get-regexp path | awk '{ print $2 }'`
+echo "${SUBMODULES}" | grep -x "${INPUT_PATH}" || error "Error: path \"${INPUT_PATH}\" is not a submodule on ${TO_HASH}"
 
 ## Initialize Submodule
 git submodule update --init --depth=1 "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Could not initialize submodule ${INPUT_PATH} as referenced by ${PR_BRANCH} (is the referenced commit pushed to remote?)"
@@ -116,8 +116,8 @@ cd "${GITHUB_WORKSPACE}" || error "__Line:${LINENO}__Error: Cannot change direct
 git checkout "${FROM_HASH}"  || error "__Line:${LINENO}__Error: Could not checkout ${FROM_HASH}"
 
 ## Check if submodule is new between commits/branches
-BASESUBMODULES=`git config --file .gitmodules --name-only --get-regexp path`
-echo "${BASESUBMODULES}" | grep ".${INPUT_PATH}." || newSubmoduleWarning "${INPUT_PATH}"
+BASESUBMODULES=`git config --file .gitmodules --get-regexp path | awk '{ print $2 }'`
+echo "${BASESUBMODULES}" | grep -x "${INPUT_PATH}" || newSubmoduleWarning "${INPUT_PATH}"
 
 ## Only get submodule on base if it exists
 if [ "$newSubmodule" = false ]; then
