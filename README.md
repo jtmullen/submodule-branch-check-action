@@ -42,10 +42,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout this repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     ## Step only reqired for private submodules
     - name: Checkout submodule repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: UserOrg/RepoName
         path: "path/to/repo"
