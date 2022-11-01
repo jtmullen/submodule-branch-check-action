@@ -11,7 +11,7 @@ restoreState () {
 }
 
 error () {
-	echo "::set-output name=fails::error"
+	echo "fails=error" >> $GITHUB_OUTPUT
 	echo "::error::$1"
 	restoreState
 	exit 1
@@ -131,14 +131,14 @@ fi
 
 fail () {
 	echo "::error file=${INPUT_PATH}::$1"
-	echo "::set-output name=fails::$1"
+	echo "fails=$1" >> $GITHUB_OUTPUT
 	restoreState
 	exit 1
 }
 
 pass () {
 	echo -e "\033[0;32mPASS: $1\033[0m"
-	echo "::set-output name=fails::"
+	echo "fails=" >> $GITHUB_OUTPUT
 	restoreState
 	exit 0	
 }
