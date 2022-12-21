@@ -201,7 +201,11 @@ fi
 
 
 ##only check for progression if we have something to compare against
-if [ "$newSubmodule" = false ]; then
+if [[ ! -z "${INPUT_DISABLE_PROGRESSION}" ]]; then
+	echo "Progression Check Disabled"
+elif [ "$newSubmodule" = true ]; then
+	echo "New Submodule, skipping progression check"
+else
 	echo "::group::Check Progression"
 	## If they are the same pass
 	echo "Check if submodule is identical hash"
