@@ -1,5 +1,5 @@
 # submodule-branch-check-action
-A [github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version (or not changing) and that the new submodule version is on a specific branch (optional). 
+A [github action](https://help.github.com/en/actions) to ensure that a submodule is progressing to a child of the previous version (or not changing) and/or that the new submodule version is on a specific branch. 
 
 
 ## Inputs
@@ -24,6 +24,9 @@ Fetch depth for the submodule being checked. This will check out every branch to
 
 ### `require_head` (optional)
 If the submodule is required to be on the head (most recent commit) of the specified branch. Keep in mind that it is possible that this will pass on a PR at the time it is run but no longer be on the most recent at the time of merge. Branch must also be specified for this to be checked.
+
+### `disable_progression` (optional)
+Include this parameter to skip the progression check portion of the action. The action will no longer check that the previous version of the submodule is an ancestor of the new version. Allows the action to be used only for branch checking.
 
 ## Outputs
 ### `fails`
@@ -59,6 +62,7 @@ jobs:
         fetch_depth: "50"
         pass_if_unchanged: true
         require_head: true
+		disable_progression: true
 ```
 
 ### Usage Notes
