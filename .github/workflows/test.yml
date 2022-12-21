@@ -73,6 +73,16 @@ jobs:
         event_path: "action/test/submodule_moved_backwards.json"
     - name: Verify Fail When Submodule Moves Backwards
       run: test "${{ steps.move-backwards.outputs.fails }}" = "Submodule submodule-action-test-submodule on 66fe441ec6c2db7565686f303dde85d7eb8ad132 is not an ancestor of that on 1063abeafa3795cfb9f80b0b2241f961d5c8e948"
+    # Pass when moves backwards if progression check disabled
+    - name: Pass When Moving Backwards Without Progression Check
+      uses: ./action/
+      id: pass-no-progression
+      with: 
+        path: "submodule-action-test-submodule"
+        event_path: "action/test/submodule_moved_backwards.json"
+        disable_progression: true
+    - name: Verify Pass No Progression
+      run: test -z "${{ steps.pass-no-progression.outputs.fails }}"
     # Error if submodule hash is invalid (such as not pushed)
     - name: Fail For Hash Not on Remote
       uses: ./action/
