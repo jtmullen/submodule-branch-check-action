@@ -186,6 +186,8 @@ if [[ ! -z "${INPUT_BRANCH}" ]]; then
 	echo "::group::Check Required Branch"
 	echo "Check for submodule on branch ${INPUT_BRANCH}"
 	BRANCHES=`git branch -r --contains ${SUBMODULE_HASH}`
+	echo "::debug::/${INPUT_BRANCH}"
+	echo "::debug::${BRANCHES}"
 	echo "${BRANCHES}" | grep "/${INPUT_BRANCH}$" || fail "Submodule ${INPUT_PATH} Hash ${SUBMODULE_HASH} is not on branch ${INPUT_BRANCH}"
 	echo "Submodule is on branch ${INPUT_BRANCH}"
 	echo "::endgroup::"
