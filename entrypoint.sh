@@ -1,10 +1,12 @@
 #!/bin/bash
 
 startrev=`git rev-parse HEAD`
+startgitfetchsetting=`git config --get remote.origin.fetch`
 
 restoreState () {
 	echo "::group::Restoring Repo State"
 	cd "${GITHUB_WORKSPACE}"
+	git config remote.origin.fetch "${startgitfetchsetting}"
 	git checkout $startrev
 	git submodule update
 	echo "::endgroup::"
@@ -100,6 +102,7 @@ cd "${INPUT_PATH}" || error "__Line:${LINENO}__Error: Cannot change directory to
 SUBMODULE_HASH=`git rev-parse HEAD`
 
 ## Update Submodule 
+git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 if [[ ! -z "${INPUT_SUB_FETCH_DEPTH}" ]]; then
 	echo "Submodule History to depth: ${INPUT_SUB_FETCH_DEPTH}"
 	git fetch --recurse-submodules=no --depth "${INPUT_SUB_FETCH_DEPTH}" || error "__Line:${LINENO}__Error: Error Fetching Submodule ${INPUT_PATH}"
