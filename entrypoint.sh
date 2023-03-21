@@ -83,6 +83,12 @@ if [[ "${isPR}" = true ]]; then
 		git fetch origin --recurse-submodules=no "${BASE_BRANCH}" || error "__Line:${LINENO}__Error: Could not fetch history of ${BASE_BRANCH}"
 	fi
 	echo "::endgroup::"
+else
+	## Fetch last two commits for push
+	echo "::group::Get Branch Push History"
+	echo "Fetching last two commits"
+	git fetch origin "${BRANCH_NAME}" --recurse-submodules=no --depth 2 || error "__Line:${LINENO}__Error: Could not fetch history of ${BRANCH_NAME}"
+	echo "::endgroup::"
 fi
 
 echo "::endgroup::"
