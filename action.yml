@@ -59,5 +59,5 @@ runs:
         INPUT_FETCH_DEPTH: ${{ inputs.fetch_depth }}
         INPUT_SUB_FETCH_DEPTH: ${{ inputs.sub_fetch_depth }}
         INPUT_REQUIRE_HEAD: ${{ inputs.require_head }}
-        INPUT_DiSABLE_PROGRESSION: ${{ inputs.disable_progression }}
+        INPUT_DISABLE_PROGRESSION: ${{ inputs.disable_progression }}
         INPUT_EVENT_PATH: ${{ inputs.event_path }}
