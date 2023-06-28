@@ -44,11 +44,13 @@ inputs:
 outputs:
   fails:
     description: "Cause of failure, if run failed"
+    value: ${{ steps.submodule-check-action.outputs.fails }}
 runs:
   using: 'composite'
   steps:
     - run: $GITHUB_ACTION_PATH/entrypoint.sh
       shell: bash
+      id: submodule-check-action
       env:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_BRANCH: ${{ inputs.branch }}
