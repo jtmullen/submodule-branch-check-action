@@ -44,8 +44,20 @@ inputs:
 outputs:
   fails:
     description: "Cause of failure, if run failed"
+    value: ${{ steps.submodule-check-action.outputs.fails }}
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.path }}
+  using: 'composite'
+  steps:
+    - run: $GITHUB_ACTION_PATH/entrypoint.sh
+      shell: bash
+      id: submodule-check-action
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_FIRST_PARENT: ${{ inputs.first_parent }}
+        INPUT_PASS_IF_UNCHANGED: ${{ inputs.pass_if_unchanged }}
+        INPUT_FETCH_DEPTH: ${{ inputs.fetch_depth }}
+        INPUT_SUB_FETCH_DEPTH: ${{ inputs.sub_fetch_depth }}
+        INPUT_REQUIRE_HEAD: ${{ inputs.require_head }}
+        INPUT_DISABLE_PROGRESSION: ${{ inputs.disable_progression }}
+        INPUT_EVENT_PATH: ${{ inputs.event_path }}
