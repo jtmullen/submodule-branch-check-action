@@ -48,7 +48,7 @@ jobs:
       uses: actions/checkout@v3
     ## Step only reqired for private submodules
     - name: Checkout submodule repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: UserOrg/RepoName
         path: "path/to/repo"
@@ -62,7 +62,7 @@ jobs:
         fetch_depth: "50"
         pass_if_unchanged: true
         require_head: true
-		disable_progression: true
+            disable_progression: true
 ```
 
 ### Usage Notes
