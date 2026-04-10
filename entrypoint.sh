@@ -51,8 +51,8 @@ if [[ $(jq -r ".pull_request.head.ref" "${EVENT_PATH}") != "null" ]]; then
 	USER=`jq -r ".pull_request.user.login" "${EVENT_PATH}"`
 	git fetch origin "${PR_BRANCH}" --recurse-submodules=no --depth 1 || error "__Line:${LINENO}__Error: Could not fetch tip of ${PR_BRANCH}"
 	git fetch origin "${BASE_BRANCH}" --recurse-submodules=no --depth 1 || error "__Line:${LINENO}__Error: Could not fetch tip of ${BASE_BRANCH}"
-	TO_HASH=`git rev-parse origin/${PR_BRANCH}`
-	FROM_HASH=`git rev-parse origin/${BASE_BRANCH}`
+	TO_HASH=$(git rev-parse -- "origin/${PR_BRANCH}")
+	FROM_HASH=$(git rev-parse -- "origin/${BASE_BRANCH}")
 	echo "Run for PR # ${PR} of ${PR_BRANCH} into ${BASE_BRANCH} on ${REPO} by ${USER}"
 	echo "Hash ${TO_HASH} into ${FROM_HASH}"
 	isPR=true
